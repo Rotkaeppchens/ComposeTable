@@ -27,6 +27,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation("com.godaddy.android.colorpicker:compose-color-picker-jvm:${extra["colorpicker.version"]}")
             }
         }
         val jvmTest by getting
