@@ -29,8 +29,9 @@ dependencies {
 compose.desktop {
     application {
         mainClass = "MainKt"
+
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.AppImage, TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "ComposeTable"
             packageVersion = "1.0.0"
         }
