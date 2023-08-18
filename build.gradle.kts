@@ -21,6 +21,10 @@ java {
 }
 
 dependencies {
+    implementation(fileTree("libs").matching {
+        include("*.jar")
+    })
+
     implementation(compose.desktop.currentOs)
 compose.desktop {
     application {
