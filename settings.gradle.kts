@@ -13,5 +13,14 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            library("koin.core", "io.insert-koin", "koin-core").version(extra["koin.core.version"] as String)
+            library("koin.compose", "io.insert-koin", "koin-compose").version(extra["koin.compose.version"] as String)
+        }
+    }
+}
+
 rootProject.name = "ComposeTable"
 

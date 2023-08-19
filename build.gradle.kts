@@ -26,6 +26,11 @@ dependencies {
     })
 
     implementation(compose.desktop.currentOs)
+
+    // Koin for Kotlin apps
+    implementation(libs.koin.core)
+    implementation(libs.koin.compose)
+}
 compose.desktop {
     application {
         mainClass = "MainKt"
