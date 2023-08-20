@@ -7,6 +7,7 @@ import data.BaseConfig
 import koin.modules.dataModule
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
+import ui.App
 
 fun main() = application {
     KoinApplication(application = {
@@ -44,6 +45,10 @@ fun main() = application {
             resizable = false,
             alwaysOnTop = true
         ) {
+            App(
+                useDarkTheme = interfaceConfig.useDarkTheme,
+                onExit = ::exitApplication
+            )
         }
     }
 }

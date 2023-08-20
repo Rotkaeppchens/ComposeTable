@@ -47,6 +47,7 @@ class BaseConfig {
         )
 
         data class InterfaceConfig(
+            val useDarkTheme: Boolean,
             val maximiseWindow: Boolean
         )
 
