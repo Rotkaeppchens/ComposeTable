@@ -46,9 +46,14 @@ class BaseConfig {
             val loopSleepTime: Duration
         )
 
+        data class InterfaceConfig(
+            val maximiseWindow: Boolean
+        )
+
         data class Config(
             val ledService: LedService,
-            val tableConfig: TableConfig
+            val tableConfig: TableConfig,
+            val interfaceConfig: InterfaceConfig
         )
     }
 }
