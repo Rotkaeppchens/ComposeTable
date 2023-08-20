@@ -16,8 +16,14 @@ pluginManagement {
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
+            version("hoplite-version", extra["hoplite.version"] as String)
+
             library("koin.core", "io.insert-koin", "koin-core").version(extra["koin.core.version"] as String)
             library("koin.compose", "io.insert-koin", "koin-compose").version(extra["koin.compose.version"] as String)
+
+            library("hoplite.core", "com.sksamuel.hoplite", "hoplite-core").versionRef("hoplite-version")
+            library("hoplite.yaml", "com.sksamuel.hoplite", "hoplite-yaml").versionRef("hoplite-version")
+            library("slf4j.nop", "org.slf4j", "slf4j-nop").version(extra["slf4j.version"] as String)
         }
     }
 }

@@ -27,10 +27,16 @@ dependencies {
 
     implementation(compose.desktop.currentOs)
 
+    // Hoplite for config reads
+    implementation(libs.hoplite.core)
+    implementation(libs.hoplite.yaml)
+    implementation(libs.slf4j.nop)
+
     // Koin for Kotlin apps
     implementation(libs.koin.core)
     implementation(libs.koin.compose)
 }
+
 compose.desktop {
     application {
         mainClass = "MainKt"
