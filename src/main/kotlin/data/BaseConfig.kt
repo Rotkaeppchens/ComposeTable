@@ -1,0 +1,54 @@
+package data
+
+import com.github.mbelling.ws281x.LedStripType
+import com.sksamuel.hoplite.ConfigLoaderBuilder
+import com.sksamuel.hoplite.addResourceOrFileSource
+import kotlin.time.Duration
+
+class BaseConfig {
+    val config = ConfigLoaderBuilder
+        .default()
+        .addResourceOrFileSource("./config.yaml")
+        .build()
+        .loadConfigOrThrow<Config>()
+
+    fun getLEDs(): List<Int> {
+        return (0 until config.ledService.ledCount).toList()
+    }
+
+    fun getSides(): List<Int> {
+        return (0..config.tableConfig.breakPoints.size).toList()
+    }
+
+    fun getLEDsForSide(side: Int): List<Int> {
+        val startIndex = config.tableConfig.breakPoints.getOrNull(side - 1) ?: 0
+        val endIndex = config.tableConfig.breakPoints.getOrNull(side) ?: config.ledService.ledCount
+
+        return (startIndex until endIndex).toList()
+    }
+
+    companion object {
+        data class LedService (
+            val initStrip: Boolean,
+            val ledCount: Int,
+            val gpioPin: Int,
+            val frequencyHz: Int,
+            val dma: Int,
+            val brightness: Int,
+            val pwmChannel: Int,
+            val invert: Boolean,
+            val stripType: LedStripType,
+            val clearOnExit: Boolean
+        )
+
+        data class TableConfig (
+            val breakPoints: List<Int>,
+            val loopSleepTime: Duration
+        )
+
+        data class Config(
+            val ledService: LedService,
+            val tableConfig: TableConfig
+        )
+    }
+}
