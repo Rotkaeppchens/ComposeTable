@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import data.BaseConfig
 import koin.modules.dataModule
+import koin.modules.viewModelsModule
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
 import ui.App
@@ -13,6 +14,7 @@ fun main() = application {
     KoinApplication(application = {
         modules(
             dataModule,
+            viewModelsModule
         )
     }) {
         val config: BaseConfig = koinInject()
