@@ -39,7 +39,8 @@ bin/
 .vscode/
 
 ### Mac OS ###
+.DS_Store
 
 ## Project ignores ##
-.config.yaml
-.data.db
+config.yaml
+data.db
