@@ -6,6 +6,7 @@ import ui.screens.*
 
 enum class NavigationTargets {
     STATUS,
+    SETTINGS,
 }
 
 @Composable
@@ -15,5 +16,6 @@ fun NavigationScreen(
 ) {
     when(target) {
         NavigationTargets.STATUS -> StatusScreen(modifier = modifier)
+        NavigationTargets.SETTINGS -> SettingsScreen(modifier = modifier)
     }
 }

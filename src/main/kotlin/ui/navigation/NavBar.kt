@@ -34,6 +34,13 @@ fun NavBar(
                 .weight(1f)
         )
 
+        NavItem(
+            navTarget = NavigationTargets.SETTINGS,
+            currentNavTarget = navTarget,
+            title = "Settings",
+            icon = Icons.Outlined.Settings,
+            onNavTargetClicked = onNavTargetClicked
+        )
         NavigationRailItem(
             selected = false,
             onClick = onExitClicked,
