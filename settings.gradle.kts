@@ -13,5 +13,26 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            version("exposed-version", extra["exposed.version"] as String)
+            version("hoplite-version", extra["hoplite.version"] as String)
+
+            library("koin.core", "io.insert-koin", "koin-core").version(extra["koin.core.version"] as String)
+            library("koin.compose", "io.insert-koin", "koin-compose").version(extra["koin.compose.version"] as String)
+
+            library("hoplite.core", "com.sksamuel.hoplite", "hoplite-core").versionRef("hoplite-version")
+            library("hoplite.yaml", "com.sksamuel.hoplite", "hoplite-yaml").versionRef("hoplite-version")
+            library("slf4j.nop", "org.slf4j", "slf4j-nop").version(extra["slf4j.version"] as String)
+
+            library("exposed.core", "org.jetbrains.exposed", "exposed-core").versionRef("exposed-version")
+            library("exposed.dao", "org.jetbrains.exposed", "exposed-dao").versionRef("exposed-version")
+            library("exposed.jdbc", "org.jetbrains.exposed", "exposed-jdbc").versionRef("exposed-version")
+            library("sqlite", "org.xerial", "sqlite-jdbc").version(extra["sqlite.jdbc.version"] as String)
+        }
+    }
+}
+
 rootProject.name = "ComposeTable"
 
