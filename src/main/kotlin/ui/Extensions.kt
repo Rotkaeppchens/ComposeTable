@@ -3,20 +3,16 @@ package ui
 import androidx.compose.ui.graphics.Color
 import data.LedColor
 
-fun Color.toLedColor(): LedColor {
-    return LedColor(
-        red = red.toDouble(),
-        blue = blue.toDouble(),
-        green = green.toDouble(),
-        alpha = alpha.toDouble()
-    )
-}
+fun Color.toLedColor(): LedColor = LedColor(
+    red = red.toDouble(),
+    blue = blue.toDouble(),
+    green = green.toDouble(),
+    alpha = alpha.toDouble()
+)
 
-fun LedColor.toColor(): Color {
-    return Color(
-        red.toFloat(),
-        green.toFloat(),
-        blue.toFloat(),
-        alpha.toFloat()
-    )
-}
+fun LedColor.toColor(): Color = Color(
+    red = red.toFloat(),
+    green = green.toFloat(),
+    blue = blue.toFloat(),
+    alpha = alpha.toFloat()
+)
