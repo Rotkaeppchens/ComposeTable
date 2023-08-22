@@ -61,6 +61,12 @@ fun SettingsScreen(
             "Break Points: ${config.tableConfig.breakPoints}\n" +
                     "Loop sleep time: ${config.tableConfig.loopSleepTime}\n"
         )
+        Text("Interface Config:", fontWeight = FontWeight.Bold)
+        Text(
+            "Dark Theme: ${config.interfaceConfig.useDarkTheme}\n" +
+                    "Maximise Window: ${config.interfaceConfig.maximiseWindow}\n" +
+                    "Renderer: ${config.interfaceConfig.renderer}\n"
+        )
         Spacer(
             modifier = Modifier.weight(1f)
         )
