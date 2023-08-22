@@ -19,7 +19,9 @@ dependencies {
         include("*.jar")
     })
 
-    implementation(compose.desktop.currentOs)
+    implementation(compose.desktop.currentOs) {
+        exclude("org.jetbrains.compose.material")
+    }
     implementation(compose.material3)
     implementation(compose.materialIconsExtended)
 
