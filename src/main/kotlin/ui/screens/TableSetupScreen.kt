@@ -160,7 +160,15 @@ fun TablePart(
                 rotationZ = rotationDeg
             }
     ) {
-        Text(name)
+        Text(
+            text = name,
+            modifier = Modifier
+                .graphicsLayer {
+                    if (abs(rotationDeg - 360) > 100) {
+                        rotationZ = 180f
+                    }
+                }
+        )
         Spacer(modifier.height(4.dp))
         Surface(
             color = Color.Transparent,
