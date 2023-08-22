@@ -15,7 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -78,8 +78,10 @@ fun LedLight(
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
         modifier = modifier
             .size(dotSize)
-            .drawBehind {
-                drawCircle(Color.Black)
+            .drawWithCache {
+                onDrawBehind {
+                    drawCircle(Color.Black)
+                }
             }
     ) {  }
 }
