@@ -1,5 +1,7 @@
 package ui.screens
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.*
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,6 +27,7 @@ import ui.theme.AppTheme
 import ui.theme.triangleShape
 import ui.toColor
 import view_models.TableSetupViewModel
+import kotlin.math.abs
 
 @Composable
 fun TableSetupScreen(
@@ -42,7 +45,6 @@ fun TableSetupScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TableSetupScreen(
     players: List<Player>,
@@ -106,7 +108,8 @@ fun TableSetupScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             TableDisplay(
-                playerMap = playerMap
+                playerMap = playerMap,
+                activePlayerId = activePlayerId,
             ) { sideId ->
                 onSetPlayerSide(sideId, activePlayerId)
             }
@@ -117,6 +120,7 @@ fun TableSetupScreen(
 @Composable
 fun TableDisplay(
     playerMap: Map<Int, Player?>,
+    activePlayerId: Int?,
     modifier: Modifier = Modifier,
     onSideClick: (sideId: Int) -> Unit
 ) {
@@ -129,11 +133,13 @@ fun TableDisplay(
         playerMap.forEach { (sideId, player) ->
             val color = player?.color?.toColor() ?: Color.Transparent
             val name = player?.name ?: ""
+            val selected = player != null && player.id == activePlayerId
 
             TablePart(
                 color = color,
                 name = name,
                 rotationDeg = (sideId * 60f) + 180f,
+                selected = selected,
                 onClick = { onSideClick(sideId) }
             )
         }
@@ -145,9 +151,25 @@ fun TablePart(
     color: Color,
     name: String,
     rotationDeg: Float,
+    selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val partColor: Color = if (selected) {
+        infiniteTransition.animateColor(
+            initialValue = color,
+            targetValue = Color.White,
+            animationSpec = infiniteRepeatable(
+                animation = tween(2000, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "Part Selected Animation"
+        ).value
+    } else {
+        Color.Black
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -179,7 +201,7 @@ fun TablePart(
                 .background(
                     brush = Brush.verticalGradient(listOf(
                         color,
-                        Color.Black
+                        partColor
                     )),
                 )
                 .border(1.dp, Color.Black, triangleShape)
