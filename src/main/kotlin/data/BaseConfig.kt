@@ -28,6 +28,13 @@ class BaseConfig {
     }
 
     companion object {
+        enum class ComposeRenderer {
+            DEFAULT,
+            SOFTWARE,
+            OPENGL,
+            METAL
+        }
+
         data class LedService (
             val initStrip: Boolean,
             val ledCount: Int,
@@ -48,7 +55,8 @@ class BaseConfig {
 
         data class InterfaceConfig(
             val useDarkTheme: Boolean,
-            val maximiseWindow: Boolean
+            val maximiseWindow: Boolean,
+            val renderer: ComposeRenderer
         )
 
         data class Config(

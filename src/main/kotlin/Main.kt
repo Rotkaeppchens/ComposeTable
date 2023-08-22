@@ -22,6 +22,17 @@ fun main() = application {
         val config: BaseConfig = koinInject()
         val interfaceConfig = config.config.interfaceConfig
 
+        if (interfaceConfig.renderer != BaseConfig.Companion.ComposeRenderer.DEFAULT) {
+            val renderer = when (interfaceConfig.renderer) {
+                BaseConfig.Companion.ComposeRenderer.SOFTWARE -> "SOFTWARE"
+                BaseConfig.Companion.ComposeRenderer.OPENGL -> "OPENGL"
+                BaseConfig.Companion.ComposeRenderer.METAL -> "METAL"
+                else -> "SOFTWARE"
+            }
+
+            System.setProperty("skiko.renderApi", renderer)
+        }
+
         val windowState = if (interfaceConfig.maximiseWindow) {
             rememberWindowState(
                 placement = WindowPlacement.Maximized

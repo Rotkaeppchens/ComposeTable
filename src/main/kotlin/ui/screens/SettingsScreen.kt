@@ -126,7 +126,8 @@ fun SettingsScreenPreview() {
                 ),
                 interfaceConfig = BaseConfig.Companion.InterfaceConfig(
                     useDarkTheme = true,
-                    maximiseWindow = false
+                    maximiseWindow = false,
+                    renderer = BaseConfig.Companion.ComposeRenderer.DEFAULT
                 )
             )
         )
