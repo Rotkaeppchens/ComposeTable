@@ -13,13 +13,15 @@ class PlayerSidesModule(
     config: BaseConfig,
     playerRepo: PlayerRepository
 ) : LedModule {
-    private val ledColors: MutableMap<Int, LedColor> = mutableMapOf()
+    private val ledColors: Array<LedColor> = Array(config.getLEDs().size) { LedColor() }
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
-            playerRepo.playerMap.collectLatest {
-                ledColors.clear()
+            config.getLEDs().forEach {
+                ledColors[it] = LedColor()
+            }
 
+            playerRepo.playerMap.collectLatest {
                 it.forEach { (sideId, player) ->
                     player?.let {
                         config.getLEDsForSide(sideId).forEach {  ledId ->
@@ -32,6 +34,6 @@ class PlayerSidesModule(
     }
 
     override fun calc(ledNr: Int): LedColor {
-        return ledColors[ledNr] ?: LedColor()
+        return ledColors[ledNr]
     }
 }
