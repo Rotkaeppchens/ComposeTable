@@ -4,14 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import ui.screens.*
 
-enum class NavigationTargets {
-    STATUS,
-    PLAYERS,
-    TIMER,
-    TABLE_SETUP,
-    SETTINGS,
-}
-
 @Composable
 fun NavigationScreen(
     target: NavigationTargets,
