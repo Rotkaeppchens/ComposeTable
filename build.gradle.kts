@@ -53,5 +53,9 @@ compose.desktop {
             packageName = "ComposeTable"
             packageVersion = "1.0.0"
         }
+
+        buildTypes.release.proguard {
+            configurationFiles.from(project.file("proguard-rules.pro"))
+        }
     }
 }
