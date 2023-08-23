@@ -30,6 +30,9 @@ dependencyResolutionManagement {
             library("exposed.dao", "org.jetbrains.exposed", "exposed-dao").versionRef("exposed-version")
             library("exposed.jdbc", "org.jetbrains.exposed", "exposed-jdbc").versionRef("exposed-version")
             library("sqlite", "org.xerial", "sqlite-jdbc").version(extra["sqlite.jdbc.version"] as String)
+
+            // Log4J for the LED library
+            library("log4j.core", "org.apache.logging.log4j", "log4j-core").version(extra["log4j.version"] as String)
         }
     }
 }

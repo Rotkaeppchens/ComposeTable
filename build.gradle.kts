@@ -39,6 +39,9 @@ dependencies {
     // Koin for Kotlin apps
     implementation(libs.koin.core)
     implementation(libs.koin.compose)
+
+    // Log4j for the LED library
+    implementation(libs.log4j.core)
 }
 
 compose.desktop {
