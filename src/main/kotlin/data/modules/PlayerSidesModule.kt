@@ -17,12 +17,12 @@ class PlayerSidesModule(
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
-            playerRepo.playerMap.collectLatest {
+            playerRepo.playerMap.collectLatest { playerMap ->
                 config.getLEDs().forEach {
                     ledColors[it] = LedColor()
                 }
-                
-                it.forEach { (sideId, player) ->
+
+                playerMap.forEach { (sideId, player) ->
                     player?.let {
                         config.getLEDsForSide(sideId).forEach {  ledId ->
                             ledColors[ledId] = it.color
