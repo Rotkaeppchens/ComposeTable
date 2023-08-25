@@ -41,7 +41,7 @@ fun StatusScreen(
     colorMap: Map<Int, List<Color>>,
     modifier: Modifier = Modifier
 ) {
-    val dotSize = remember { 12.dp }
+    val dotSize = remember { 10.dp }
 
     Column(
         modifier = modifier
