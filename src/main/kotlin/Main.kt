@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import data.BaseConfig
+import data.database.source.initDatabase
 import koin.modules.dataModule
 import koin.modules.ledModulesModule
 import koin.modules.viewModelsModule
@@ -12,6 +13,8 @@ import org.koin.compose.koinInject
 import ui.App
 
 fun main() = application {
+    initDatabase()
+
     KoinApplication(application = {
         modules(
             ledModulesModule,
