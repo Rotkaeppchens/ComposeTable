@@ -24,7 +24,7 @@ import data.entities.Player
 import org.koin.compose.koinInject
 import ui.composables.PlayerList
 import ui.theme.AppTheme
-import ui.theme.triangleShape
+import ui.theme.equilateralTriangleShape
 import ui.toColor
 import view_models.TableSetupViewModel
 import kotlin.math.abs
@@ -196,15 +196,15 @@ fun TablePart(
             color = Color.Transparent,
             modifier = Modifier
                 .width(200.dp)
-                .height(173.2.dp)
-                .clip(triangleShape)
+                .height(175.dp)
+                .clip(equilateralTriangleShape)
                 .background(
                     brush = Brush.verticalGradient(listOf(
                         color,
                         partColor
                     )),
                 )
-                .border(1.dp, Color.Black, triangleShape)
+                .border(1.dp, borderColor, equilateralTriangleShape)
                 .clickable(onClick = onClick)
         ) {}
     }
