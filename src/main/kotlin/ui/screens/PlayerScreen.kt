@@ -88,6 +88,7 @@ fun PlayerScreen(
                 color = selectedColor,
                 onColorChange = setSelectedColor,
                 modifier = Modifier
+                    .width(250.dp)
                     .fillMaxHeight()
             )
         }

@@ -28,7 +28,6 @@ fun ColorSelector(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
-            .width(350.dp)
             .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(8.dp)
     ) {
