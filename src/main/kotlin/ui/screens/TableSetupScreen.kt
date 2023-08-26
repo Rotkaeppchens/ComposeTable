@@ -156,12 +156,12 @@ fun TablePart(
     modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition()
-    val partColor: Color = if (selected) {
+    val borderColor: Color = if (selected) {
         infiniteTransition.animateColor(
-            initialValue = color,
+            initialValue = Color.Black,
             targetValue = Color.White,
             animationSpec = infiniteRepeatable(
-                animation = tween(2000, easing = LinearEasing),
+                animation = tween(1000, easing = LinearEasing),
                 repeatMode = RepeatMode.Reverse
             ),
             label = "Part Selected Animation"
@@ -201,7 +201,7 @@ fun TablePart(
                 .background(
                     brush = Brush.verticalGradient(listOf(
                         color,
-                        partColor
+                        Color.White
                     )),
                 )
                 .border(1.dp, borderColor, equilateralTriangleShape)
