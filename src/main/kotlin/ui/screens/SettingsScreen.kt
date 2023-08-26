@@ -2,6 +2,7 @@ package ui.screens
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
@@ -43,30 +44,36 @@ fun SettingsScreen(
     Column(
         modifier = modifier
     ) {
-        Text("LED Service:", fontWeight = FontWeight.Bold)
-        Text(
-            "Init Strip: ${config.ledService.initStrip}\n" +
-                    "LED Count: ${config.ledService.ledCount}\n" +
-                    "GPIO: ${config.ledService.gpioPin}\n" +
-                    "Frequency: ${config.ledService.frequencyHz}\n" +
-                    "DMA: ${config.ledService.dma}\n" +
-                    "Brightness: ${config.ledService.brightness}\n" +
-                    "PWM channel: ${config.ledService.pwmChannel}\n" +
-                    "Invert: ${config.ledService.invert}\n" +
-                    "Type: ${config.ledService.stripType}\n" +
-                    "Clear on exit: ${config.ledService.clearOnExit}\n"
-        )
-        Text("Table Config:", fontWeight = FontWeight.Bold)
-        Text(
-            "Break Points: ${config.tableConfig.breakPoints}\n" +
-                    "Loop sleep time: ${config.tableConfig.loopSleepTime}\n"
-        )
-        Text("Interface Config:", fontWeight = FontWeight.Bold)
-        Text(
-            "Dark Theme: ${config.interfaceConfig.useDarkTheme}\n" +
-                    "Maximise Window: ${config.interfaceConfig.maximiseWindow}\n" +
-                    "Renderer: ${config.interfaceConfig.renderer}\n"
-        )
+        Row {
+            Column {
+                Text("LED Service:", fontWeight = FontWeight.Bold)
+                Text(
+                    "Init Strip: ${config.ledService.initStrip}\n" +
+                            "LED Count: ${config.ledService.ledCount}\n" +
+                            "GPIO: ${config.ledService.gpioPin}\n" +
+                            "Frequency: ${config.ledService.frequencyHz}\n" +
+                            "DMA: ${config.ledService.dma}\n" +
+                            "Brightness: ${config.ledService.brightness}\n" +
+                            "PWM channel: ${config.ledService.pwmChannel}\n" +
+                            "Invert: ${config.ledService.invert}\n" +
+                            "Type: ${config.ledService.stripType}\n" +
+                            "Clear on exit: ${config.ledService.clearOnExit}\n"
+                )
+            }
+            Column {
+                Text("Table Config:", fontWeight = FontWeight.Bold)
+                Text(
+                    "Break Points: ${config.tableConfig.breakPoints}\n" +
+                            "Loop sleep time: ${config.tableConfig.loopSleepTime}\n"
+                )
+                Text("Interface Config:", fontWeight = FontWeight.Bold)
+                Text(
+                    "Dark Theme: ${config.interfaceConfig.useDarkTheme}\n" +
+                            "Maximise Window: ${config.interfaceConfig.maximiseWindow}\n" +
+                            "Renderer: ${config.interfaceConfig.renderer}\n"
+                )
+            }
+        }
         Spacer(
             modifier = Modifier.weight(1f)
         )
