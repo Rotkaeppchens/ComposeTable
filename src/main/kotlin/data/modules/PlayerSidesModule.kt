@@ -13,6 +13,8 @@ class PlayerSidesModule(
     config: BaseConfig,
     playerRepo: PlayerRepository
 ) : LedModule {
+    override val moduleId = "Player Sides"
+
     private val ledColors: Array<LedColor> = Array(config.getLEDs().size) { LedColor() }
 
     init {

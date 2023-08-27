@@ -14,6 +14,8 @@ import kotlin.time.Duration
 class TimerModule(
     private val config: BaseConfig
 ) : LedModule {
+    override val moduleId = "Timer"
+
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
     private var timerJob: Job? = null
 
