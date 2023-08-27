@@ -77,6 +77,7 @@ fun ColorRGBInput(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
+            .padding(horizontal = 8.dp)
     ) {
         ColorSliderInput(
             value = color.red,
