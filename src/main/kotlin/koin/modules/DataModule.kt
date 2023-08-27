@@ -2,6 +2,7 @@ package koin.modules
 
 import data.BaseConfig
 import data.LedController
+import data.repositories.ModuleConfigRepository
 import data.repositories.PlayerRepository
 import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
