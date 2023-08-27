@@ -14,4 +14,5 @@ val dataModule = module {
 
     // Repositories
     singleOf(::PlayerRepository)
+    singleOf(::ModuleConfigRepository)
 }
