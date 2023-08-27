@@ -69,7 +69,7 @@ fun PlayerScreen(
         )
         Spacer(modifier = Modifier.width(8.dp))
         if (activePlayer != null) {
-            val (selectedColor, setSelectedColor) = remember(activePlayer.color) {
+            val (selectedColor, setSelectedColor) = remember(activePlayer) {
                 mutableStateOf(activePlayer.color.toColor())
             }
 
@@ -151,7 +151,7 @@ fun CurrentPlayerInput(
     setPlayerName: (name: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (playerNameInput, setPlayerNameInput) = remember(player.name) { mutableStateOf(player.name) }
+    val (playerNameInput, setPlayerNameInput) = remember(player) { mutableStateOf(player.name) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
