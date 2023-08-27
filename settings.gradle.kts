@@ -19,6 +19,8 @@ dependencyResolutionManagement {
             version("exposed-version", extra["exposed.version"] as String)
             version("hoplite-version", extra["hoplite.version"] as String)
 
+            library("kotlinx.datetime", "org.jetbrains.kotlinx", "kotlinx-datetime").version(extra["kotlinx.datetime.version"] as String)
+
             library("koin.core", "io.insert-koin", "koin-core").version(extra["koin.core.version"] as String)
             library("koin.compose", "io.insert-koin", "koin-compose").version(extra["koin.compose.version"] as String)
 

@@ -25,6 +25,8 @@ dependencies {
     implementation(compose.material3)
     implementation(compose.materialIconsExtended)
 
+    implementation(libs.kotlinx.datetime)
+
     // Hoplite for config reads
     implementation(libs.hoplite.core)
     implementation(libs.hoplite.yaml)
