@@ -1,55 +1,42 @@
 package view_models
 
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import data.modules.TimerModule
+import kotlinx.coroutines.flow.*
 import view_models.base.ViewModel
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
-class TimerViewModel: ViewModel() {
-    private var timerJob: Job? = null
+class TimerViewModel(
+    private val timerModule: TimerModule
+): ViewModel() {
+    private val _inputDuration: MutableStateFlow<Duration> = MutableStateFlow(0.seconds)
 
-    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(
+    val uiState: StateFlow<UiState> = combine(
+        _inputDuration,
+        timerModule.timerState
+    ) { inputDuration, state ->
         UiState(
-            timerState = TimerState.Stopped
+            inputDuration = inputDuration,
+            timerState = state
         )
-    )
-    val uiState: StateFlow<UiState>
-        get() = _uiState
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState(
+        inputDuration = 0.seconds,
+        timerState = TimerModule.TimerState.Stopped
+    ))
 
-    fun resetTimer() {
-        _uiState.update {
-            timerJob?.cancel()
-
-            it.copy(
-                timerState = TimerState.Stopped
-            )
+    fun setTimerDuration(duration: Duration) {
+        _inputDuration.update {
+            if (duration.isNegative()) 0.seconds else duration
         }
     }
 
-    fun startTimer(seconds: Int) {
-        timerJob?.cancel()
-        timerJob = viewModelScope.launch {
-            for (i in seconds downTo 0) {
-                _uiState.update { it.copy(timerState = TimerState.Running(i)) }
-                delay(1000L)
-            }
-
-            _uiState.update { it.copy(timerState = TimerState.Finished) }
-        }
-    }
-
-    sealed class TimerState {
-        data object Stopped : TimerState()
-
-        data class Running(val secondsLeft: Int) : TimerState()
-
-        data object Finished : TimerState()
-    }
+    fun startTimer() = timerModule.startTimer(_inputDuration.value)
+    fun resetTimer() = timerModule.resetTimer()
+    fun pauseTimer() = timerModule.pauseTimer()
+    fun stopTimer() = timerModule.stopTimer()
 
     data class UiState(
-        val timerState: TimerState
+        val inputDuration: Duration,
+        val timerState: TimerModule.TimerState
     )
 }
