@@ -60,8 +60,6 @@ fun main() = application {
             onCloseRequest = ::exitApplication,
             state = windowState,
             undecorated = true,
-            resizable = false,
-            alwaysOnTop = true
         ) {
             App(
                 useDarkTheme = interfaceConfig.useDarkTheme,
