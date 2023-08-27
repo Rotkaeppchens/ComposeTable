@@ -83,6 +83,7 @@ fun TimerScreen(
             )
             Spacer(Modifier.height(32.dp))
             TimerControls(
+                timerState = timerState,
                 onStartClicked = onStartClicked,
                 onPauseClicked = onPauseClicked,
                 onResetClicked = onResetClicked,
@@ -166,6 +167,7 @@ fun TimerInputPart(
 
 @Composable
 fun TimerControls(
+    timerState: TimerModule.TimerState,
     onStartClicked: () -> Unit,
     onPauseClicked: () -> Unit,
     onResetClicked: () -> Unit,
@@ -182,7 +184,8 @@ fun TimerControls(
     ) {
         FilledTonalIconButton(
             onClick = onResetClicked,
-            colors = iconColors
+            colors = iconColors,
+            enabled = timerState is TimerModule.TimerState.Running || timerState is TimerModule.TimerState.Paused
         ) {
             Icon(
                 imageVector = Icons.Outlined.Replay,
@@ -191,7 +194,8 @@ fun TimerControls(
         }
         FilledTonalIconButton(
             onClick = onStartClicked,
-            colors = iconColors
+            colors = iconColors,
+            enabled = timerState !is TimerModule.TimerState.Running
         ) {
             Icon(
                 imageVector = Icons.Outlined.PlayArrow,
@@ -200,7 +204,8 @@ fun TimerControls(
         }
         FilledTonalIconButton(
             onClick = onPauseClicked,
-            colors = iconColors
+            colors = iconColors,
+            enabled = timerState is TimerModule.TimerState.Running
         ) {
             Icon(
                 imageVector = Icons.Outlined.Pause,
@@ -209,7 +214,8 @@ fun TimerControls(
         }
         FilledTonalIconButton(
             onClick = onStopClicked,
-            colors = iconColors
+            colors = iconColors,
+            enabled = timerState !is TimerModule.TimerState.Stopped
         ) {
             Icon(
                 imageVector = Icons.Outlined.Stop,
