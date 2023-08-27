@@ -2,6 +2,7 @@ package koin.modules
 
 import data.BaseConfig
 import data.LedController
+import data.ModuleController
 import data.repositories.ModuleConfigRepository
 import data.repositories.PlayerRepository
 import org.koin.core.module.dsl.createdAtStart
@@ -11,6 +12,7 @@ import org.koin.dsl.module
 
 val dataModule = module {
     singleOf(::BaseConfig)
+    singleOf(::ModuleController)
     singleOf(::LedController) withOptions { createdAtStart() }
 
     // Repositories

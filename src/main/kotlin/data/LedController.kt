@@ -3,8 +3,6 @@ package data
 import com.github.mbelling.ws281x.Color
 import com.github.mbelling.ws281x.LedStrip
 import com.github.mbelling.ws281x.Ws281xLedStrip
-import data.modules.PlayerSidesModule
-import data.modules.TimerModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -15,11 +13,8 @@ import kotlinx.coroutines.launch
 
 class LedController(
     private val config: BaseConfig,
-    timerModule: TimerModule,
-    playerSidesModule: PlayerSidesModule
+    private val moduleController: ModuleController
 ) {
-    private val moduleList: MutableList<LedModule> = mutableListOf()
-
     private val strip: LedStrip? = if (config.config.ledService.initStrip) {
         val ledService = config.config.ledService
 
@@ -44,14 +39,14 @@ class LedController(
         get() = _ledState
 
     init {
-        registerModule(timerModule)
-        registerModule(playerSidesModule)
         startLoop()
     }
 
     private fun startLoop() {
         CoroutineScope(Dispatchers.Default).launch {
             while (true) {
+                val moduleList = moduleController.moduleList.value
+
                 val colors = config.getLEDs().map {
                     moduleList.fold(LedColor()) { color, module ->
                         return@fold color.blend(module.calc(it))
@@ -75,9 +70,5 @@ class LedController(
                 delay(config.config.tableConfig.loopSleepTime)
             }
         }
-    }
-
-    private fun registerModule(module: LedModule) {
-        moduleList.add(module)
     }
 }
