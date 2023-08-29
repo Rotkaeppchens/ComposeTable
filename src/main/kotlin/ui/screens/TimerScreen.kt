@@ -75,16 +75,21 @@ fun TimerScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
         ) {
-            TimerInput(
-                inputDuration = inputDuration,
-                onSetTimer = onSetTimer
-            )
-            Spacer(Modifier.height(32.dp))
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.weight(1f)
+            ) {
+                TimerInput(
+                    inputDuration = inputDuration,
+                    onSetTimer = onSetTimer
+                )
+            }
             TimerControls(
                 timerState = timerState,
                 onStartPauseClicked = onStartPauseClicked,
                 onResetClicked = onResetClicked,
-                onStopClicked = onStopClicked
+                onStopClicked = onStopClicked,
+                modifier = Modifier.padding(16.dp)
             )
         }
     }
