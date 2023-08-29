@@ -24,6 +24,7 @@ dependencies {
     }
     implementation(compose.material3)
     implementation(compose.materialIconsExtended)
+    implementation(compose.animation)
 
     implementation(libs.kotlinx.datetime)
 
