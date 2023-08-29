@@ -44,8 +44,7 @@ fun TimerScreen(
         timerState = uiState.timerState,
         inputDuration = uiState.inputDuration,
         onSetTimer = { viewModel.setTimerDuration(it) },
-        onStartClicked = { viewModel.startTimer() },
-        onPauseClicked = { viewModel.pauseTimer() },
+        onStartPauseClicked = { viewModel.startPauseTimer() },
         onResetClicked = { viewModel.resetTimer() },
         onStopClicked = { viewModel.stopTimer() },
         modifier = modifier
@@ -57,8 +56,7 @@ fun TimerScreen(
     timerState: TimerModule.TimerState,
     inputDuration: Duration,
     onSetTimer: (Duration) -> Unit,
-    onStartClicked: () -> Unit,
-    onPauseClicked: () -> Unit,
+    onStartPauseClicked: () -> Unit,
     onResetClicked: () -> Unit,
     onStopClicked: () -> Unit,
     modifier: Modifier = Modifier
@@ -84,8 +82,7 @@ fun TimerScreen(
             Spacer(Modifier.height(32.dp))
             TimerControls(
                 timerState = timerState,
-                onStartClicked = onStartClicked,
-                onPauseClicked = onPauseClicked,
+                onStartPauseClicked = onStartPauseClicked,
                 onResetClicked = onResetClicked,
                 onStopClicked = onStopClicked
             )
@@ -168,8 +165,7 @@ fun TimerInputPart(
 @Composable
 fun TimerControls(
     timerState: TimerModule.TimerState,
-    onStartClicked: () -> Unit,
-    onPauseClicked: () -> Unit,
+    onStartPauseClicked: () -> Unit,
     onResetClicked: () -> Unit,
     onStopClicked: () -> Unit,
     modifier: Modifier = Modifier
@@ -193,24 +189,20 @@ fun TimerControls(
             )
         }
         FilledTonalIconButton(
-            onClick = onStartClicked,
+            onClick = onStartPauseClicked,
             colors = iconColors,
-            enabled = timerState !is TimerModule.TimerState.Running
         ) {
-            Icon(
-                imageVector = Icons.Outlined.PlayArrow,
-                contentDescription = null
-            )
-        }
-        FilledTonalIconButton(
-            onClick = onPauseClicked,
-            colors = iconColors,
-            enabled = timerState is TimerModule.TimerState.Running
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Pause,
-                contentDescription = null
-            )
+            if (timerState !is TimerModule.TimerState.Running) {
+                Icon(
+                    imageVector = Icons.Outlined.PlayArrow,
+                    contentDescription = null
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Outlined.Pause,
+                    contentDescription = null
+                )
+            }
         }
         FilledTonalIconButton(
             onClick = onStopClicked,

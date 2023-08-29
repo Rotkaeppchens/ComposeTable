@@ -30,9 +30,15 @@ class TimerViewModel(
         }
     }
 
-    fun startTimer() = timerModule.startTimer(_inputDuration.value)
+    fun startPauseTimer() {
+        if (timerModule.timerState.value is TimerModule.TimerState.Running) {
+            timerModule.pauseTimer()
+        } else {
+            timerModule.startTimer(_inputDuration.value)
+        }
+    }
+
     fun resetTimer() = timerModule.resetTimer()
-    fun pauseTimer() = timerModule.pauseTimer()
     fun stopTimer() = timerModule.stopTimer()
 
     data class UiState(
