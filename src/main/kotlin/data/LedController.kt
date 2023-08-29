@@ -45,6 +45,9 @@ class LedController(
     private fun startLoop() {
         CoroutineScope(Dispatchers.Default).launch {
             while (true) {
+                // Render eventual animations
+                LedClock.clock.sendFrame(System.nanoTime())
+
                 val moduleList = moduleController.moduleList.value
 
                 val colors = config.getLEDs().map {
