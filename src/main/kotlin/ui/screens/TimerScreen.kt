@@ -240,11 +240,11 @@ fun TimerDisplay(
                 val transition = rememberInfiniteTransition()
                 val alpha by transition.animateFloat(
                     initialValue = 1.0f,
-                    targetValue = 0.5f,
+                    targetValue = 0.3f,
                     animationSpec = infiniteRepeatable(
                         animation = tween(
                             durationMillis = 1000,
-                            easing = LinearEasing
+                            easing = Ease
                         ),
                         repeatMode = RepeatMode.Reverse,
                     )
