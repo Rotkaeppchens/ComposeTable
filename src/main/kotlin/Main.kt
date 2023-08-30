@@ -38,7 +38,7 @@ fun main() = application {
 
         val windowState = if (interfaceConfig.maximiseWindow) {
             rememberWindowState(
-                placement = WindowPlacement.Maximized
+                placement = WindowPlacement.Fullscreen
             )
         } else {
             /**
