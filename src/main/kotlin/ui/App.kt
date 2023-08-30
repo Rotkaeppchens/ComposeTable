@@ -1,15 +1,12 @@
 package ui
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import ui.navigation.NavBar
 import ui.navigation.NavigationScreen
 import ui.navigation.NavigationTargets
@@ -27,7 +24,6 @@ fun App(
     ) {
         Surface(
             modifier = Modifier
-                .border(1.dp, MaterialTheme.colorScheme.onSurface)
                 .fillMaxSize()
         ) {
             Row {
