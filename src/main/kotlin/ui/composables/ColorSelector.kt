@@ -3,14 +3,8 @@ package ui.composables
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -114,6 +108,7 @@ fun ColorRGBInput(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorSliderInput(
     value: Float,
@@ -126,13 +121,20 @@ fun ColorSliderInput(
         value = value,
         onValueChange = onValueChange,
         valueRange = valueRange,
-        colors = SliderDefaults.colors(
-            activeTrackColor = Color.Transparent,
-            disabledActiveTrackColor = Color.Transparent,
-            disabledInactiveTrackColor = Color.Transparent,
-            inactiveTrackColor = Color.Transparent
-        ),
+        track = {
+            SliderDefaults.Track(
+                sliderPositions = it,
+                colors = SliderDefaults.colors(
+                    activeTrackColor = Color.Transparent,
+                    disabledActiveTrackColor = Color.Transparent,
+                    disabledInactiveTrackColor = Color.Transparent,
+                    inactiveTrackColor = Color.Transparent
+                ),
+                modifier = modifier.fillMaxHeight()
+            )
+        },
         modifier = modifier
+            .height(60.dp)
             .clip(MaterialTheme.shapes.medium)
             .drawWithCache {
                 onDrawBehind {
