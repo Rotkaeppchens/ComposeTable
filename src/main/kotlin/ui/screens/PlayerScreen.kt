@@ -1,11 +1,11 @@
 package ui.screens
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.PersonRemove
+import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,12 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import data.LedColor
 import data.entities.Player
 import org.koin.compose.koinInject
 import ui.composables.ColorSelector
 import ui.composables.PlayerList
-import ui.theme.AppTheme
 import ui.toColor
 import view_models.PlayerViewModel
 
@@ -32,8 +30,10 @@ fun PlayerScreen(
 
     PlayerScreen(
         playerList = uiState.players,
-        setPlayerName = { id, name -> viewModel.setPlayerName(id, name) },
-        setPlayerColor = { id, color -> viewModel.setPlayerColor(id, color) },
+        onSave = { id, name, color ->
+            viewModel.setPlayerName(id, name)
+            viewModel.setPlayerColor(id, color)
+        },
         addPlayerClicked = { viewModel.addPlayer() },
         removePlayerClicked = { viewModel.removePlayer(it) },
         modifier = modifier
@@ -43,8 +43,7 @@ fun PlayerScreen(
 @Composable
 fun PlayerScreen(
     playerList: List<Player>,
-    setPlayerName: (playerId: Int, name: String) -> Unit,
-    setPlayerColor: (playerId: Int, color: Color) -> Unit,
+    onSave: (playerId: Int, name: String, color: Color) -> Unit,
     addPlayerClicked: () -> Unit,
     removePlayerClicked: (playerId: Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -69,15 +68,22 @@ fun PlayerScreen(
         )
         Spacer(modifier = Modifier.width(8.dp))
         if (activePlayer != null) {
+            val (playerNameInput, setPlayerNameInput) = remember(activePlayer) {
+                mutableStateOf(activePlayer.name)
+            }
             val (selectedColor, setSelectedColor) = remember(activePlayer) {
                 mutableStateOf(activePlayer.color.toColor())
             }
 
             CurrentPlayerInput(
-                player = activePlayer,
-                setPlayerName = {
-                    setPlayerName(activePlayer.id, it)
-                    setPlayerColor(activePlayer.id, selectedColor)
+                playerNameInput = playerNameInput,
+                setPlayerNameInput = setPlayerNameInput,
+                onSaveClicked = {
+                    onSave(activePlayer.id, playerNameInput, selectedColor)
+                },
+                onResetClicked = {
+                    setPlayerNameInput(activePlayer.name)
+                    setSelectedColor(activePlayer.color.toColor())
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -147,12 +153,12 @@ fun PlayerListWithIcons(
 
 @Composable
 fun CurrentPlayerInput(
-    player: Player,
-    setPlayerName: (name: String) -> Unit,
+    playerNameInput: String,
+    setPlayerNameInput: (name: String) -> Unit,
+    onSaveClicked: () -> Unit,
+    onResetClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (playerNameInput, setPlayerNameInput) = remember(player) { mutableStateOf(player.name) }
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -167,38 +173,28 @@ fun CurrentPlayerInput(
             maxLines = 1
         )
         Spacer(Modifier.height(8.dp))
-        Button(
-            onClick = { setPlayerName(playerNameInput) },
-            contentPadding = ButtonDefaults.ButtonWithIconContentPadding
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Save,
-                contentDescription = null,
-                modifier = Modifier.size(ButtonDefaults.IconSize)
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text("Save")
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PlayerScreenPreview() {
-    AppTheme {
-        PlayerScreen(
-            playerList = listOf(
-                Player(
-                    1, "Test", LedColor()
-                ),
-                Player(
-                    2, "HelloWorld", LedColor(1.0, 0.0, 0.0, 1.0)
+        Row {
+            Button(
+                onClick = onSaveClicked,
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Save,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
                 )
-            ),
-            setPlayerName = { _, _ ->  },
-            setPlayerColor = { _, _ ->},
-            addPlayerClicked = {},
-            removePlayerClicked = {}
-        )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text("Save")
+            }
+            Spacer(Modifier.width(16.dp))
+            FilledTonalIconButton(
+                onClick = onResetClicked
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.RestartAlt,
+                    contentDescription = null
+                )
+            }
+        }
     }
 }
