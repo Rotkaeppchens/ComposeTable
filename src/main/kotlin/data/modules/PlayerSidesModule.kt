@@ -35,7 +35,7 @@ class PlayerSidesModule(
         }
     }
 
-    override fun onUpdate(nanoTime: Long): List<LedColor> {
-        return ledColors.toList()
+    override fun onUpdate(nanoTime: Long): Array<LedColor> {
+        return ledColors
     }
 }
