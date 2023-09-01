@@ -37,6 +37,57 @@ class PlayerRepository(
         }.toMap()
     }.stateIn(scope, SharingStarted.Eagerly, emptyMap())
 
+    val playerSides: StateFlow<Map<Player, List<Int>>> = playerMap.map {
+        val playerSides: MutableMap<Player, List<Int>> = mutableMapOf()
+
+        it.forEach { (sideId, player) ->
+            if (player != null) {
+                val sides = playerSides[player] ?: emptyList()
+                playerSides[player] = sides + sideId
+            }
+        }
+
+        playerSides
+    }.stateIn(scope, SharingStarted.Eagerly, emptyMap())
+
+    val playerChunks: StateFlow<Map<Player, List<List<Int>>>> = playerSides.map { playerSides ->
+        playerSides.map { (player, sidesList) ->
+            val sidesCnt = config.getSides().size
+            val firstGap = config.getSides().firstOrNull { !sidesList.contains(it) }
+
+            val chunkList = if (firstGap == null) {
+                listOf(config.getLEDs())
+            } else {
+                val ledLists: MutableList<List<Int>> = mutableListOf()
+                val insertionList: MutableList<Int> = mutableListOf()
+
+                config.getSides().forEach {
+                    val index = (firstGap + it) % sidesCnt
+
+                    if (sidesList.contains(index)) {
+                        insertionList.addAll(config.getLEDsForSide(index))
+                    } else if (insertionList.isNotEmpty()) {
+                        ledLists.add(insertionList.toList())
+                        insertionList.clear()
+                    }
+                }
+
+                if (insertionList.isNotEmpty()) {
+                    ledLists.add(insertionList.toList())
+                    insertionList.clear()
+                }
+
+                ledLists
+            }
+
+            player to chunkList
+        }.toMap()
+    }.stateIn(scope, SharingStarted.Eagerly, emptyMap())
+
+    val activePlayers: StateFlow<Set<Player>> = playerSides.map {
+        it.keys
+    }.stateIn(scope, SharingStarted.Eagerly, emptySet())
+
     init {
         scope.launch {
             loadPlayersFromDatabase()
