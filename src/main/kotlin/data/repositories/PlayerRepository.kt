@@ -121,7 +121,6 @@ class PlayerRepository(
 
     fun setPlayerSide(sideId: Int, playerId: Int?) {
         if (!config.getSides().contains(sideId)) return
-        if (sideId >= _playerMap.value.size) return
 
         _playerMap.update {
             val newArr = it.copyOf()
