@@ -77,8 +77,8 @@ class TimerModule(
         }
     }.stateIn(scope, SharingStarted.Eagerly, Array(config.config.ledService.ledCount) { LedColor() })
 
-    override fun calc(ledNr: Int): LedColor {
-        return ledColors.value[ledNr]
+    override fun onUpdate(nanoTime: Long): List<LedColor> {
+        return ledColors.value.toList()
     }
 
     private fun startTimerJob() {
