@@ -10,4 +10,5 @@ val viewModelsModule = module {
     factoryOf(::StatusViewModel)
     factoryOf(::TableSetupViewModel)
     factoryOf(::TimerViewModel)
+    factoryOf(::HealthViewModel)
 }
