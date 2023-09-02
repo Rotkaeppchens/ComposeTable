@@ -5,5 +5,6 @@ enum class NavigationTargets {
     PLAYERS,
     TABLE_SETUP,
     TIMER,
+    HEALTH,
     SETTINGS,
 }

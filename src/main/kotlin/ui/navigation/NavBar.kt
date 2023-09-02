@@ -61,6 +61,13 @@ fun NavBar(
             icon = Icons.Outlined.Timer,
             onNavTargetClicked = onNavTargetClicked
         )
+        NavItem(
+            navTarget = NavigationTargets.HEALTH,
+            currentNavTarget = navTarget,
+            title = "Health",
+            icon = Icons.Outlined.Bloodtype,
+            onNavTargetClicked = onNavTargetClicked
+        )
 
         Spacer(
             modifier = Modifier

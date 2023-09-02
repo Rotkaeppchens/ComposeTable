@@ -43,6 +43,7 @@ fun NavigationScreen(
             NavigationTargets.PLAYERS -> PlayerScreen(modifier = modifier)
             NavigationTargets.TABLE_SETUP -> TableSetupScreen(modifier = modifier)
             NavigationTargets.TIMER -> TimerScreen(modifier = modifier)
+            NavigationTargets.HEALTH -> HealthScreen(modifier = modifier)
             NavigationTargets.SETTINGS -> SettingsScreen(modifier = modifier)
         }
     }
