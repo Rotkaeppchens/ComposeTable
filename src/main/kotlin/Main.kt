@@ -50,8 +50,8 @@ fun main() = application {
                 placement = WindowPlacement.Floating,
                 position = WindowPosition(Alignment.Center),
                 size = DpSize(
-                    width = 960.dp,
-                    height = 576.dp
+                    width = 800.dp,
+                    height = 480.dp
                 )
             )
         }
