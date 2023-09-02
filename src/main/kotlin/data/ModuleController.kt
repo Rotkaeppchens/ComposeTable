@@ -1,6 +1,7 @@
 package data
 
 import data.entities.ModuleConfig
+import data.modules.HealthModule
 import data.modules.PlayerSidesModule
 import data.modules.TimerModule
 import data.repositories.ModuleConfigRepository
@@ -12,6 +13,7 @@ import kotlinx.coroutines.launch
 class ModuleController(
     private val timerModule: TimerModule,
     private val playerSidesModule: PlayerSidesModule,
+    private val healthModule: HealthModule,
     private val configRepo: ModuleConfigRepository
 ) {
     private val scope = CoroutineScope(Dispatchers.Default)
@@ -44,7 +46,8 @@ class ModuleController(
             // Load Modules
             val moduleList = listOf(
                 timerModule,
-                playerSidesModule
+                playerSidesModule,
+                healthModule
             )
 
             _moduleList.update { moduleList }
