@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Backspace
+import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +52,18 @@ fun IntegerInputDialog(
                 value = input,
                 onValueChange = setInput,
                 singleLine = true,
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            setInput("0")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Cancel,
+                            contentDescription = null
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -71,9 +85,12 @@ fun IntegerInputDialog(
             }
             Row {
                 FilledTonalIconButton(
-                    onClick = { setInput("0") }
+                    onClick = { setInput(initialValue.toString()) }
                 ) {
-                    Text("C")
+                    Icon(
+                        imageVector = Icons.Outlined.RestartAlt,
+                        contentDescription = null
+                    )
                 }
                 NumberButton(number = 0, onClick = { addNumber("0") })
                 FilledTonalIconButton(
