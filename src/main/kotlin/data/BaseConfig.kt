@@ -56,7 +56,8 @@ class BaseConfig {
         data class InterfaceConfig(
             val useDarkTheme: Boolean,
             val maximiseWindow: Boolean,
-            val renderer: ComposeRenderer
+            val renderer: ComposeRenderer,
+            val touchSlop: Float
         )
 
         data class Config(

@@ -19,20 +19,22 @@ fun App(
 ) {
     val (navTarget, setNavTarget) = remember { mutableStateOf(NavigationTargets.STATUS) }
 
-    AppTheme(
-        useDarkTheme = useDarkTheme
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
+    AppViewConfiguration {
+        AppTheme(
+            useDarkTheme = useDarkTheme
         ) {
-            Row {
-                NavBar(
-                    navTarget = navTarget,
-                    onNavTargetClicked = setNavTarget,
-                    onExitClicked = onExit
-                )
-                NavigationScreen(navTarget)
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Row {
+                    NavBar(
+                        navTarget = navTarget,
+                        onNavTargetClicked = setNavTarget,
+                        onExitClicked = onExit
+                    )
+                    NavigationScreen(navTarget)
+                }
             }
         }
     }
