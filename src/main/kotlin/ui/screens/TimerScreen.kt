@@ -3,9 +3,8 @@ package ui.screens
 import androidx.compose.animation.core.*
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Pause
@@ -13,20 +12,18 @@ import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Replay
 import androidx.compose.material.icons.outlined.Stop
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import data.modules.TimerModule
 import org.koin.compose.koinInject
+import ui.composables.IntegerInputDialog
 import ui.theme.AppTheme
 import view_models.TimerViewModel
-import kotlin.math.roundToLong
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -41,9 +38,12 @@ fun TimerScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     TimerScreen(
-        timerState = uiState.timerState,
+        timer = uiState.currentTimer,
         inputDuration = uiState.inputDuration,
+        inputConfig = uiState.inputConfig,
         onSetTimer = { viewModel.setTimerDuration(it) },
+        onSetFillType = { viewModel.setTimerFillType(it) },
+        onSetTailType = { viewModel.setTimerTail(it) },
         onStartPauseClicked = { viewModel.startPauseTimer() },
         onResetClicked = { viewModel.resetTimer() },
         onStopClicked = { viewModel.stopTimer() },
@@ -53,9 +53,12 @@ fun TimerScreen(
 
 @Composable
 fun TimerScreen(
-    timerState: TimerModule.TimerState,
+    timer: TimerModule.Timer,
     inputDuration: Duration,
+    inputConfig: TimerModule.TimerConfig,
     onSetTimer: (Duration) -> Unit,
+    onSetFillType: (TimerModule.FillType) -> Unit,
+    onSetTailType: (TimerModule.TailType) -> Unit,
     onStartPauseClicked: () -> Unit,
     onResetClicked: () -> Unit,
     onStopClicked: () -> Unit,
@@ -65,7 +68,7 @@ fun TimerScreen(
         modifier = modifier
     ) {
         TimerDisplay(
-            timerState = timerState,
+            timer = timer,
             modifier = Modifier
                 .width(200.dp)
                 .fillMaxHeight()
@@ -75,17 +78,20 @@ fun TimerScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.weight(1f)
-            ) {
-                TimerInput(
-                    inputDuration = inputDuration,
-                    onSetTimer = onSetTimer
-                )
-            }
+            TimerInput(
+                inputDuration = inputDuration,
+                onSetTimer = onSetTimer
+            )
+            TimerFillType(
+                fillType = inputConfig.fillType,
+                onSetFillType = onSetFillType
+            )
+            TimerTailType(
+                tailType = inputConfig.tailType,
+                onSetTailType = onSetTailType
+            )
             TimerControls(
-                timerState = timerState,
+                timerState = timer.state,
                 onStartPauseClicked = onStartPauseClicked,
                 onResetClicked = onResetClicked,
                 onStopClicked = onStopClicked,
@@ -93,6 +99,13 @@ fun TimerScreen(
             )
         }
     }
+}
+
+enum class DialogState {
+    HIDDEN,
+    HOURS,
+    MINUTES,
+    SECONDS
 }
 
 @Composable
@@ -105,13 +118,40 @@ fun TimerInput(
     val inputMinutes: Int = remember(inputDuration) { (inputDuration.inWholeMinutes % 60).toInt() }
     val inputHours: Int = remember(inputDuration) { inputDuration.inWholeHours.toInt() }
 
+    var displayDialog by remember { mutableStateOf(DialogState.HIDDEN) }
+
+    if (displayDialog != DialogState.HIDDEN) {
+        IntegerInputDialog(
+            onValueSubmit = {
+                onSetTimer(
+                    when (displayDialog) {
+                        DialogState.HIDDEN -> 0.seconds
+                        DialogState.HOURS -> it.hours + inputMinutes.minutes + inputSeconds.seconds
+                        DialogState.MINUTES -> inputHours.hours + it.minutes + inputSeconds.seconds
+                        DialogState.SECONDS -> inputMinutes.hours + inputMinutes.minutes + it.seconds
+                    }
+                )
+                displayDialog = DialogState.HIDDEN
+            },
+            onDismissRequest = { displayDialog = DialogState.HIDDEN },
+            initialValue = when (displayDialog) {
+                DialogState.HIDDEN -> 0
+                DialogState.HOURS -> inputHours
+                DialogState.MINUTES -> inputMinutes
+                DialogState.SECONDS -> inputSeconds
+            }
+        )
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
     ) {
         TimerInputPart(
             value = inputHours,
-            onValueChange = { onSetTimer(inputDuration + it.hours) }
+            description = "Hours",
+            onClick = { displayDialog = DialogState.HOURS }
         )
         Text(
             text = ":",
@@ -119,7 +159,8 @@ fun TimerInput(
         )
         TimerInputPart(
             value = inputMinutes,
-            onValueChange = { onSetTimer(inputDuration + it.minutes) }
+            description = "Minutes",
+            onClick = { displayDialog = DialogState.MINUTES }
         )
         Text(
             text = ":",
@@ -127,7 +168,8 @@ fun TimerInput(
         )
         TimerInputPart(
             value = inputSeconds,
-            onValueChange = { onSetTimer(inputDuration + it.seconds) }
+            description = "Seconds",
+            onClick = { displayDialog = DialogState.SECONDS }
         )
     }
 }
@@ -135,35 +177,84 @@ fun TimerInput(
 @Composable
 fun TimerInputPart(
     value: Int,
-    onValueChange: (change: Long) -> Unit,
+    description: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
+            .clip(MaterialTheme.shapes.small)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onBackground,
+                shape = MaterialTheme.shapes.small
+            )
+            .clickable(onClick = onClick)
+            .padding(8.dp)
     ) {
-        Row {
-            FilledTonalIconButton({ onValueChange(10) }) { Text("+10") }
-            FilledTonalIconButton({ onValueChange(1) }) { Text("+1") }
-        }
-        Spacer(Modifier.height(16.dp))
         Text(
-            text = "%02d".format(value),
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
-                .draggable(
-                    state = rememberDraggableState { delta ->
-                        onValueChange(-delta.roundToLong())
-                    },
-                    orientation = Orientation.Vertical
-                )
+            text = value.toString(),
+            style = MaterialTheme.typography.titleLarge
         )
-        Spacer(Modifier.height(16.dp))
-        Row {
-            FilledTonalIconButton({ onValueChange(-10) }) { Text("-10") }
-            FilledTonalIconButton({ onValueChange(-1) }) { Text("-1") }
-        }
+        Text(
+            text = description,
+            fontWeight = FontWeight.Light,
+            style = MaterialTheme.typography.titleSmall
+        )
+    }
+}
+
+@Composable
+fun TimerFillType(
+    fillType: TimerModule.FillType,
+    onSetFillType: (TimerModule.FillType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Text("Fill Type:")
+        RadioButton(
+            selected = fillType == TimerModule.FillType.COMPLETE,
+            onClick = { onSetFillType(TimerModule.FillType.COMPLETE) }
+        )
+        Text("Complete")
+        RadioButton(
+            selected = fillType == TimerModule.FillType.SIDES,
+            onClick = { onSetFillType(TimerModule.FillType.SIDES) }
+        )
+        Text("Sides")
+    }
+}
+
+@Composable
+fun TimerTailType(
+    tailType: TimerModule.TailType,
+    onSetTailType: (TimerModule.TailType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Text("Tail Type:")
+        RadioButton(
+            selected = tailType == TimerModule.TailType.FILL,
+            onClick = { onSetTailType(TimerModule.TailType.FILL) }
+        )
+        Text("Fill")
+        RadioButton(
+            selected = tailType == TimerModule.TailType.SHORT,
+            onClick = { onSetTailType(TimerModule.TailType.SHORT) }
+        )
+        Text("Short")
+        RadioButton(
+            selected = tailType == TimerModule.TailType.LONG,
+            onClick = { onSetTailType(TimerModule.TailType.LONG) }
+        )
+        Text("Long")
     }
 }
 
@@ -186,7 +277,6 @@ fun TimerControls(
         FilledTonalIconButton(
             onClick = onResetClicked,
             colors = iconColors,
-            enabled = timerState is TimerModule.TimerState.Running || timerState is TimerModule.TimerState.Paused
         ) {
             Icon(
                 imageVector = Icons.Outlined.Replay,
@@ -197,7 +287,7 @@ fun TimerControls(
             onClick = onStartPauseClicked,
             colors = iconColors,
         ) {
-            if (timerState !is TimerModule.TimerState.Running) {
+            if (timerState != TimerModule.TimerState.RUNNING) {
                 Icon(
                     imageVector = Icons.Outlined.PlayArrow,
                     contentDescription = null
@@ -212,7 +302,7 @@ fun TimerControls(
         FilledTonalIconButton(
             onClick = onStopClicked,
             colors = iconColors,
-            enabled = timerState !is TimerModule.TimerState.Stopped
+            enabled = timerState != TimerModule.TimerState.STOPPED
         ) {
             Icon(
                 imageVector = Icons.Outlined.Stop,
@@ -224,7 +314,7 @@ fun TimerControls(
 
 @Composable
 fun TimerDisplay(
-    timerState: TimerModule.TimerState,
+    timer: TimerModule.Timer,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -234,9 +324,9 @@ fun TimerDisplay(
             .background(MaterialTheme.colorScheme.secondaryContainer)
             .padding(8.dp)
     ) {
-        when(timerState) {
-            TimerModule.TimerState.Finished -> Text("FINISHED")
-            is TimerModule.TimerState.Paused -> {
+        when(timer.state) {
+            TimerModule.TimerState.FINISHED -> Text("FINISHED")
+            TimerModule.TimerState.PAUSED -> {
                 val transition = rememberInfiniteTransition()
                 val alpha by transition.animateFloat(
                     initialValue = 1.0f,
@@ -251,20 +341,20 @@ fun TimerDisplay(
                 )
 
                 TimerStateRunning(
-                    duration = timerState.duration,
-                    timeLeft = timerState.timeLeft,
-                    percentage = timerState.percentage,
+                    duration = timer.duration,
+                    timeLeft = timer.timeLeft,
+                    percentage = timer.percentage,
                     modifier = Modifier.alpha(alpha)
                 )
             }
-            is TimerModule.TimerState.Running -> {
+            TimerModule.TimerState.RUNNING -> {
                 TimerStateRunning(
-                    duration = timerState.duration,
-                    timeLeft = timerState.timeLeft,
-                    percentage = timerState.percentage
+                    duration = timer.duration,
+                    timeLeft = timer.timeLeft,
+                    percentage = timer.percentage
                 )
             }
-            TimerModule.TimerState.Stopped -> Text("STOPPED")
+            TimerModule.TimerState.STOPPED -> Text("STOPPED")
         }
     }
 }

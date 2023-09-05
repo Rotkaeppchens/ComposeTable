@@ -1,5 +1,6 @@
 package view_models
 
+import data.LedColor
 import data.modules.TimerModule
 import kotlinx.coroutines.flow.*
 import view_models.base.ViewModel
@@ -10,18 +11,27 @@ class TimerViewModel(
     private val timerModule: TimerModule
 ): ViewModel() {
     private val _inputDuration: MutableStateFlow<Duration> = MutableStateFlow(0.seconds)
+    private val _inputConfig: MutableStateFlow<TimerModule.TimerConfig> = MutableStateFlow(TimerModule.TimerConfig())
 
     val uiState: StateFlow<UiState> = combine(
         _inputDuration,
-        timerModule.timerState
-    ) { inputDuration, state ->
+        _inputConfig,
+        timerModule.timer
+    ) { inputDuration, inputConfig, state ->
         UiState(
             inputDuration = inputDuration,
-            timerState = state
+            inputConfig =  inputConfig,
+            currentTimer = state
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState(
         inputDuration = 0.seconds,
-        timerState = TimerModule.TimerState.Stopped
+        inputConfig = TimerModule.TimerConfig(),
+        currentTimer = TimerModule.Timer(
+            state = TimerModule.TimerState.STOPPED,
+            duration = 60.seconds,
+            percentage = 0f,
+            timeLeft = 60.seconds
+        )
     ))
 
     fun setTimerDuration(duration: Duration) {
@@ -30,19 +40,57 @@ class TimerViewModel(
         }
     }
 
-    fun startPauseTimer() {
-        if (timerModule.timerState.value is TimerModule.TimerState.Running) {
-            timerModule.pauseTimer()
-        } else {
-            timerModule.startTimer(_inputDuration.value)
+    fun setTimerColor(color: LedColor) {
+        _inputConfig.update {
+            it.copy(
+                fillColor = color
+            )
         }
     }
 
-    fun resetTimer() = timerModule.resetTimer()
+    fun setTimerFillType(fillType: TimerModule.FillType) {
+        _inputConfig.update {
+            it.copy(
+                fillType = fillType
+            )
+        }
+    }
+
+    fun setTimerTail(tailType: TimerModule.TailType) {
+        _inputConfig.update {
+            it.copy(
+                tailType = tailType
+            )
+        }
+    }
+
+    fun startPauseTimer() {
+        when (timerModule.timer.value.state) {
+            TimerModule.TimerState.RUNNING -> timerModule.pauseTimer()
+            TimerModule.TimerState.PAUSED -> timerModule.resumeTimer()
+            else -> {
+                timerModule.startTimer(
+                    duration = _inputDuration.value,
+                    timerConfig = _inputConfig.value
+                )
+            }
+        }
+    }
+
+    fun resetTimer() {
+        val timer = timerModule.timer.value
+
+        timerModule.startTimer(
+            duration = timer.duration,
+            timerConfig = timer.config
+        )
+    }
+
     fun stopTimer() = timerModule.stopTimer()
 
     data class UiState(
         val inputDuration: Duration,
-        val timerState: TimerModule.TimerState
+        val inputConfig: TimerModule.TimerConfig,
+        val currentTimer: TimerModule.Timer
     )
 }
