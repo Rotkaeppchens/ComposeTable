@@ -35,6 +35,7 @@ class TimerModule(
     private val darkArray = Array(config.config.ledService.ledCount) { darkLED }
 
     private var pulsingAlpha: Animatable<Float, AnimationVector1D>? = null
+    private val finishingAlpha = Animatable(0.0f)
 
     override fun onUpdate(nanoTime: Long): Array<LedColor> {
         val timer = _timer.value
@@ -55,7 +56,11 @@ class TimerModule(
                     timerConfig = timer.config
                 )
             }
-            TimerState.FINISHED -> darkArray
+            TimerState.FINISHED -> {
+                val color = timer.config.fillColor.copy(alpha = finishingAlpha.value.toDouble())
+
+                Array(config.config.ledService.ledCount) { color }
+            }
         }
     }
 
@@ -140,6 +145,23 @@ class TimerModule(
                         val percentage = if (durationMilli == 0L) 0f else timePassedMilli.toFloat() / durationMilli.toFloat()
 
                         if (timeLeft.isNegative()) {
+                            LedClock.animationScope.launch {
+                                finishingAlpha.animateTo(
+                                    targetValue = 0.0f,
+                                    animationSpec = keyframes {
+                                        durationMillis = 3000
+
+                                        0.0f at 0
+                                        1.0f at 500
+                                        0.0f at 1000
+                                        1.0f at 1500
+                                        0.0f at 2000
+                                        1.0f at 2500
+                                        0.0f at 3000
+                                    }
+                                )
+                            }
+
                             timer.copy(
                                 state = TimerState.FINISHED
                             )
