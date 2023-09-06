@@ -7,22 +7,24 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Pause
-import androidx.compose.material.icons.outlined.PlayArrow
-import androidx.compose.material.icons.outlined.Replay
-import androidx.compose.material.icons.outlined.Stop
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import data.modules.TimerModule
 import org.koin.compose.koinInject
+import ui.composables.ColorDisplay
+import ui.composables.ColorSelectorDialog
 import ui.composables.IntegerInputDialog
 import ui.theme.AppTheme
+import ui.toColor
+import ui.toLedColor
 import view_models.TimerViewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
@@ -44,6 +46,7 @@ fun TimerScreen(
         onSetTimer = { viewModel.setTimerDuration(it) },
         onSetFillType = { viewModel.setTimerFillType(it) },
         onSetTailType = { viewModel.setTimerTail(it) },
+        onSetColor = { viewModel.setTimerColor(it.toLedColor()) },
         onStartPauseClicked = { viewModel.startPauseTimer() },
         onResetClicked = { viewModel.resetTimer() },
         onStopClicked = { viewModel.stopTimer() },
@@ -59,6 +62,7 @@ fun TimerScreen(
     onSetTimer: (Duration) -> Unit,
     onSetFillType: (TimerModule.FillType) -> Unit,
     onSetTailType: (TimerModule.TailType) -> Unit,
+    onSetColor: (Color) -> Unit,
     onStartPauseClicked: () -> Unit,
     onResetClicked: () -> Unit,
     onStopClicked: () -> Unit,
@@ -89,6 +93,10 @@ fun TimerScreen(
             TimerTailType(
                 tailType = inputConfig.tailType,
                 onSetTailType = onSetTailType
+            )
+            TimerColor(
+                color = inputConfig.fillColor.toColor(),
+                onSetColor = onSetColor
             )
             TimerControls(
                 timerState = timer.state,
@@ -255,6 +263,41 @@ fun TimerTailType(
             onClick = { onSetTailType(TimerModule.TailType.LONG) }
         )
         Text("Long")
+    }
+}
+
+@Composable
+fun TimerColor(
+    color: Color,
+    onSetColor: (Color) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var displayColorDialog by remember { mutableStateOf(false) }
+
+    if (displayColorDialog) {
+        ColorSelectorDialog(
+            initialColor = color,
+            onColorSelect = {
+                onSetColor(it)
+                displayColorDialog = false
+            },
+            onDismissRequest = {
+                displayColorDialog = false
+            }
+        )
+    }
+
+    Row(
+        modifier = modifier
+    ) {
+        ColorDisplay(
+            color
+        )
+        FilledTonalIconButton(
+            onClick = { displayColorDialog = true }
+        ) {
+            Icon(Icons.Outlined.Edit, contentDescription = null)
+        }
     }
 }
 
