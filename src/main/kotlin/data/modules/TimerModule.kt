@@ -149,15 +149,15 @@ class TimerModule(
                                 finishingAlpha.animateTo(
                                     targetValue = 0.0f,
                                     animationSpec = keyframes {
-                                        durationMillis = 3000
+                                        durationMillis = 2400
 
                                         0.0f at 0
-                                        1.0f at 500
-                                        0.0f at 1000
-                                        1.0f at 1500
-                                        0.0f at 2000
-                                        1.0f at 2500
-                                        0.0f at 3000
+                                        1.0f at 400
+                                        0.0f at 800
+                                        1.0f at 1200
+                                        0.0f at 1600
+                                        1.0f at 2000
+                                        0.0f at 2400
                                     }
                                 )
                             }
