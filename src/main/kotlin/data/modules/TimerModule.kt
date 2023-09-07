@@ -158,12 +158,15 @@ class TimerModule(
 
                         if (timeLeft.isNegative()) {
                             LedClock.animationScope.launch {
+                                finishingAlpha.snapTo(
+                                    if (timer.config.tailType == TailType.FILL) 1.0f
+                                    else 0.0f
+                                )
                                 finishingAlpha.animateTo(
                                     targetValue = 0.0f,
                                     animationSpec = keyframes {
                                         durationMillis = 2400
 
-                                        0.0f at 0
                                         1.0f at 400
                                         0.0f at 800
                                         1.0f at 1200
