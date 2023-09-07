@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlin.math.exp
+import kotlin.math.sin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -107,25 +109,35 @@ class TimerModule(
         tailType: TailType
     ): Map<Int, LedColor> {
         val activeLEDs = ledList.size * percentage
-        val completeLEDs = activeLEDs.toInt()
-        val fractionalLED = activeLEDs - completeLEDs
 
-        val (tailStart, tailAlphaFraction) = when (tailType) {
-            TailType.FILL -> 0 to 1f
-            TailType.SHORT -> completeLEDs - 10 to 0.1f
-            TailType.LONG -> completeLEDs - 20 to 0.05f
-        }
+        val tailRange: ClosedFloatingPointRange<Double> = when (tailType) {
+            TailType.FILL -> 0.0
+            TailType.SHORT -> activeLEDs - 10.0
+            TailType.LONG -> activeLEDs - 20.0
+        }..activeLEDs + 5.0
 
         return ledList.mapIndexed { i, ledId ->
-            ledId to when (i) {
-                in tailStart..<completeLEDs -> {
-                    val tailAlpha = if (tailType == TailType.FILL) 1f else (i - tailStart) * tailAlphaFraction
+            val result = if (i.toDouble() in tailRange) {
+                when {
+                    i > activeLEDs -> {
+                        val tailLedId = i.toDouble() - activeLEDs
+                        val ledTailPos = tailLedId / (tailRange.endInclusive - activeLEDs)
 
-                    fillColor.copy(alpha = (tailAlpha * alpha).toDouble())
+                        exp(-4.0 * ledTailPos)
+                    }
+                    tailType == TailType.FILL -> 1.0
+                    else -> {
+                        val tailLedId = i.toDouble() - tailRange.start
+                        val ledTailPos = tailLedId / (activeLEDs - tailRange.start)
+
+                        sin((Math.PI / 2) * ledTailPos)
+                    }
                 }
-                completeLEDs -> fillColor.copy(alpha = (fractionalLED * alpha).toDouble())
-                else -> darkLED
-            }
+            } else {
+                0.0
+            }.coerceIn(0.0, 1.0)
+
+            ledId to fillColor.copy(alpha = result * alpha)
         }.toMap()
     }
 
