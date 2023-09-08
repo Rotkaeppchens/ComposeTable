@@ -93,33 +93,68 @@ fun InfoScreen(
             .fillMaxSize()
     ) {
         Column {
-            Text("LED Service:", fontWeight = FontWeight.Bold)
-            Text(
-                "Init Strip: ${config.ledService.initStrip}\n" +
-                        "LED Count: ${config.ledService.ledCount}\n" +
-                        "GPIO: ${config.ledService.gpioPin}\n" +
-                        "Frequency: ${config.ledService.frequencyHz}\n" +
-                        "DMA: ${config.ledService.dma}\n" +
-                        "Brightness: ${config.ledService.brightness}\n" +
-                        "PWM channel: ${config.ledService.pwmChannel}\n" +
-                        "Invert: ${config.ledService.invert}\n" +
-                        "Type: ${config.ledService.stripType}\n" +
-                        "Clear on exit: ${config.ledService.clearOnExit}\n"
-            )
+            InfoTitle("LED Service:")
+            InfoLine("Init Strip:", config.ledService.initStrip)
+            InfoLine("LED Count:", config.ledService.ledCount)
+            InfoLine("GPIO Pin:", config.ledService.gpioPin)
+            InfoLine("Frequency (Hz):", config.ledService.frequencyHz)
+            InfoLine("DMA:", config.ledService.dma)
+            InfoLine("Brightness:", config.ledService.brightness)
+            InfoLine("PWM Channel:", config.ledService.pwmChannel)
+            InfoLine("Invert:", config.ledService.invert)
+            InfoLine("Type:", config.ledService.stripType)
+            InfoLine("Clear On Exit:", config.ledService.clearOnExit)
         }
         Column {
-            Text("Table Config:", fontWeight = FontWeight.Bold)
-            Text(
-                "Break Points: ${config.tableConfig.breakPoints}\n" +
-                        "Loop sleep time: ${config.tableConfig.loopSleepTime}\n"
-            )
-            Text("Interface Config:", fontWeight = FontWeight.Bold)
-            Text(
-                "Dark Theme: ${config.interfaceConfig.useDarkTheme}\n" +
-                        "Maximise Window: ${config.interfaceConfig.maximiseWindow}\n" +
-                        "Renderer: ${config.interfaceConfig.renderer}\n"
-            )
+            InfoTitle("Table Config:")
+            InfoLine("Break Points:", config.tableConfig.breakPoints)
+            InfoLine("Loop sleep time:", config.tableConfig.loopSleepTime)
+
+            Spacer(Modifier.height(16.dp))
+
+            InfoTitle("Interface Config:")
+            InfoLine("Dark Theme:", config.interfaceConfig.useDarkTheme)
+            InfoLine("Maximise Window:", config.interfaceConfig.maximiseWindow)
+            InfoLine("Renderer:", config.interfaceConfig.renderer)
+            InfoLine("Touch Slop:", config.interfaceConfig.touchSlop)
         }
+    }
+}
+
+@Composable
+fun InfoTitle(
+    title: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = title,
+        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.titleMedium,
+        modifier = modifier
+            .padding(bottom = 8.dp)
+    )
+}
+
+@Composable
+fun InfoLine(
+    title: String,
+    value: Any,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(end = 8.dp)
+        )
+        Text(
+            text = value.toString(),
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
 
