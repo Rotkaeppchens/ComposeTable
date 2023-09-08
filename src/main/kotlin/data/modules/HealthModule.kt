@@ -113,11 +113,13 @@ class HealthModule(
 
             ledAnimClock.animationScope.launch {
                 if (percentage < 0.1f) {
-                    animatedAlpha[playerId] = Animatable(0.0f)
-                    animatedAlpha[playerId]?.animateTo(
-                        targetValue = 1.0f,
-                        animationSpec = healthLowAnimationSpec
-                    )
+                    if (!animatedAlpha.containsKey(playerId)) {
+                        animatedAlpha[playerId] = Animatable(0.0f)
+                        animatedAlpha[playerId]?.animateTo(
+                            targetValue = 1.0f,
+                            animationSpec = healthLowAnimationSpec
+                        )
+                    }
                 } else {
                     animatedAlpha[playerId]?.stop()
                     animatedAlpha.remove(playerId)
