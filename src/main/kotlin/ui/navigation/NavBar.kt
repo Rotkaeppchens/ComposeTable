@@ -1,14 +1,24 @@
 package ui.navigation
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import ui.theme.AppTheme
 
 @Composable
@@ -18,8 +28,22 @@ fun NavBar(
     modifier: Modifier = Modifier,
     onNavTargetClicked: (target: NavigationTargets) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
+
     NavigationRail (
         modifier = modifier
+            .verticalScroll(
+                state = scrollState,
+            )
+            .draggable(
+                orientation = Orientation.Vertical,
+                state = rememberDraggableState { delta ->
+                    scope.launch {
+                        scrollState.scrollBy(-delta)
+                    }
+                },
+            )
     ) {
         NavItem(
             navTarget = NavigationTargets.STATUS,
@@ -29,10 +53,7 @@ fun NavBar(
             onNavTargetClicked = onNavTargetClicked
         )
 
-        Spacer(
-            modifier = Modifier
-                .weight(1f)
-        )
+        Spacer(Modifier.height(16.dp))
 
         NavItem(
             navTarget = NavigationTargets.PLAYERS,
@@ -49,10 +70,7 @@ fun NavBar(
             onNavTargetClicked = onNavTargetClicked
         )
 
-        Spacer(
-            modifier = Modifier
-                .weight(1f)
-        )
+        Spacer(Modifier.height(16.dp))
 
         NavItem(
             navTarget = NavigationTargets.TIMER,
@@ -69,10 +87,7 @@ fun NavBar(
             onNavTargetClicked = onNavTargetClicked
         )
 
-        Spacer(
-            modifier = Modifier
-                .weight(1f)
-        )
+        Spacer(Modifier.height(16.dp))
 
         NavItem(
             navTarget = NavigationTargets.SETTINGS,
