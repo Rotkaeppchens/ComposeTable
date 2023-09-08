@@ -10,12 +10,9 @@ data class LedColor(
     val blue: Double = 0.0,
     val alpha: Double = 0.0
 ) {
-    val finalRed: Int
-        get() = (red * alpha * 255).roundToInt()
-    val finalGreen: Int
-        get() = (green * alpha * 255).roundToInt()
-    val finalBlue: Int
-        get() = (blue * alpha * 255).roundToInt()
+    val finalRed: Int = (red * alpha * 255).roundToInt()
+    val finalGreen: Int = (green * alpha * 255).roundToInt()
+    val finalBlue: Int = (blue * alpha * 255).roundToInt()
 
     fun blend(color: LedColor): LedColor = LedColorMixer::blend.invoke(this, color)
 
