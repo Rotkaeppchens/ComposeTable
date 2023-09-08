@@ -4,21 +4,19 @@ import data.BaseConfig
 import data.LedColor
 import data.LedModule
 import data.repositories.PlayerRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PlayerSidesModule(
     config: BaseConfig,
     playerRepo: PlayerRepository
-) : LedModule {
+) : LedModule() {
     override val moduleId = "Player Sides"
 
     private val ledColors: Array<LedColor> = Array(config.getLEDs().size) { LedColor() }
 
     init {
-        CoroutineScope(Dispatchers.Default).launch {
+        moduleScope.launch {
             playerRepo.playerMap.collectLatest { playerMap ->
                 config.getLEDs().forEach {
                     ledColors[it] = LedColor()

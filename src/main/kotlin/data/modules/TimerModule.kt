@@ -5,10 +5,12 @@ import data.BaseConfig
 import data.LedAnimationClock
 import data.LedColor
 import data.LedModule
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlin.math.exp
@@ -19,10 +21,9 @@ import kotlin.time.Duration.Companion.seconds
 class TimerModule(
     private val config: BaseConfig,
     private val ledAnimClock: LedAnimationClock
-) : LedModule {
+) : LedModule() {
     override val moduleId = "Timer"
 
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
     private var timerJob: Job? = null
 
     private val _timer: MutableStateFlow<Timer> = MutableStateFlow(Timer(
@@ -144,7 +145,7 @@ class TimerModule(
 
     private fun startTimerJob() {
         timerJob?.cancel()
-        timerJob = scope.launch {
+        timerJob = moduleScope.launch {
             while(_timer.value.state == TimerState.RUNNING) {
                 _timer.update { timer ->
                     if (timer.state == TimerState.RUNNING) {

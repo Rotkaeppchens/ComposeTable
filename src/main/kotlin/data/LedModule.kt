@@ -1,7 +1,12 @@
 package data
 
-interface LedModule {
-    val moduleId: String
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
-    fun onUpdate(nanoTime: Long): Array<LedColor>
+abstract class LedModule {
+    abstract val moduleId: String
+
+    abstract fun onUpdate(nanoTime: Long): Array<LedColor>
+
+    val moduleScope = CoroutineScope(Dispatchers.Default)
 }

@@ -7,8 +7,6 @@ import data.LedAnimationClock
 import data.LedColor
 import data.LedModule
 import data.repositories.PlayerRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ui.toColor
@@ -17,10 +15,8 @@ class HealthModule(
     private val config: BaseConfig,
     private val playerRepo: PlayerRepository,
     private val ledAnimClock: LedAnimationClock
-): LedModule {
+): LedModule() {
     override val moduleId = "Health"
-
-    private val scope = CoroutineScope(Dispatchers.Default)
 
     private val healthChangeAnimationSpec = tween<Float>(
         durationMillis = 1000,
@@ -62,7 +58,7 @@ class HealthModule(
                 percentage = percentage
             )
         }
-    }.stateIn(scope, SharingStarted.Eagerly, emptyList())
+    }.stateIn(moduleScope, SharingStarted.Eagerly, emptyList())
 
     private val animatedHealth: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf()
     private val animatedAlpha: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf()
