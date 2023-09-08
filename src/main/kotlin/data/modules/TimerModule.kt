@@ -2,7 +2,7 @@ package data.modules
 
 import androidx.compose.animation.core.*
 import data.BaseConfig
-import data.LedClock
+import data.LedAnimationClock
 import data.LedColor
 import data.LedModule
 import kotlinx.coroutines.*
@@ -17,7 +17,8 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class TimerModule(
-    private val config: BaseConfig
+    private val config: BaseConfig,
+    private val ledAnimClock: LedAnimationClock
 ) : LedModule {
     override val moduleId = "Timer"
 
@@ -157,7 +158,7 @@ class TimerModule(
                         val percentage = if (durationMilli == 0L) 0f else timePassedMilli.toFloat() / durationMilli.toFloat()
 
                         if (timeLeft.isNegative()) {
-                            LedClock.animationScope.launch {
+                            ledAnimClock.animationScope.launch {
                                 finishingAlpha.snapTo(
                                     if (timer.config.tailType == TailType.FILL) 1.0f
                                     else 0.0f
@@ -225,7 +226,7 @@ class TimerModule(
     fun pauseTimer() {
         _timer.update { timer ->
             if (timer.state == TimerState.RUNNING) {
-                LedClock.animationScope.launch {
+                ledAnimClock.animationScope.launch {
                     pulsingAlpha = Animatable(0.0f)
                     pulsingAlpha?.animateTo(
                         targetValue = 1.0f,

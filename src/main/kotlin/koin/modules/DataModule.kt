@@ -1,6 +1,7 @@
 package koin.modules
 
 import data.BaseConfig
+import data.LedAnimationClock
 import data.LedController
 import data.ModuleController
 import data.repositories.ModuleConfigRepository
@@ -13,6 +14,7 @@ import org.koin.dsl.module
 val dataModule = module {
     singleOf(::BaseConfig)
     singleOf(::ModuleController)
+    singleOf(::LedAnimationClock)
     singleOf(::LedController) withOptions { createdAtStart() }
 
     // Repositories

@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 
 class LedController(
     private val config: BaseConfig,
-    private val moduleController: ModuleController
+    private val moduleController: ModuleController,
+    private val ledAnimClock: LedAnimationClock
 ) {
     private val strip: LedStrip? = if (config.config.ledService.initStrip) {
         val ledService = config.config.ledService
@@ -48,7 +49,7 @@ class LedController(
                 val now = System.nanoTime()
 
                 // Render eventual animations
-                LedClock.clock.sendFrame(now)
+                ledAnimClock.clock.sendFrame(now)
 
                 val moduleList = moduleController.moduleList.value.map {
                     it.onUpdate(now)

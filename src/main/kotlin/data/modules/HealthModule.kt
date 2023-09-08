@@ -3,7 +3,7 @@ package data.modules
 import androidx.compose.animation.core.*
 import androidx.compose.ui.graphics.Color
 import data.BaseConfig
-import data.LedClock
+import data.LedAnimationClock
 import data.LedColor
 import data.LedModule
 import data.repositories.PlayerRepository
@@ -15,7 +15,8 @@ import ui.toColor
 
 class HealthModule(
     private val config: BaseConfig,
-    private val playerRepo: PlayerRepository
+    private val playerRepo: PlayerRepository,
+    private val ledAnimClock: LedAnimationClock
 ): LedModule {
     override val moduleId = "Health"
 
@@ -105,7 +106,7 @@ class HealthModule(
 
             val percentage = if (newMaxHealth == 0) 1f else newHealth.toFloat() / newMaxHealth.toFloat()
 
-            LedClock.animationScope.launch {
+            ledAnimClock.animationScope.launch {
                 if (!animatedHealth.containsKey(playerId)) animatedHealth[playerId] = Animatable(1.0f)
 
                 animatedHealth[playerId]?.animateTo(
@@ -114,7 +115,7 @@ class HealthModule(
                 )
             }
 
-            LedClock.animationScope.launch {
+            ledAnimClock.animationScope.launch {
                 if (percentage < 0.1f) {
                     animatedAlpha[playerId] = Animatable(0.0f)
                     animatedAlpha[playerId]?.animateTo(
