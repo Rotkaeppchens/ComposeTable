@@ -66,7 +66,7 @@ class HealthModule(
     override fun onUpdate(nanoTime: Long): Array<LedColor> {
         val playerChunks = playerRepo.playerChunks.value
 
-        val ledArr = Array(config.config.ledService.ledCount) { LedColor() }
+        val ledArr = Array(config.config.ledService.ledCount) { LedColor.Dark }
 
         playerChunks.forEach { (player, chunkList) ->
             val healthState = healthStates.value.first { it.playerId == player.id }

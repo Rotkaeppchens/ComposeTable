@@ -35,8 +35,7 @@ class TimerModule(
     val timer: StateFlow<Timer>
         get() = _timer
 
-    private val darkLED = LedColor()
-    private val darkArray = Array(config.config.ledService.ledCount) { darkLED }
+    private val darkArray = Array(config.config.ledService.ledCount) { LedColor.Dark }
 
     private var pulsingAlpha: Animatable<Float, AnimationVector1D>? = null
     private val finishingAlpha = Animatable(0.0f)
@@ -86,7 +85,7 @@ class TimerModule(
                 }.toTypedArray()
             }
             FillType.SIDES -> {
-                val result = Array(config.getLEDs().size) { LedColor() }
+                val result = Array(config.getLEDs().size) { LedColor.Dark }
 
                 config.getSides().forEach { sideId ->
                     calculateLedColorForRange(

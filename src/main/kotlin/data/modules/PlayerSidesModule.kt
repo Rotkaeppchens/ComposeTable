@@ -13,13 +13,13 @@ class PlayerSidesModule(
 ) : LedModule() {
     override val moduleId = "Player Sides"
 
-    private val ledColors: Array<LedColor> = Array(config.getLEDs().size) { LedColor() }
+    private val ledColors: Array<LedColor> = Array(config.getLEDs().size) { LedColor.Dark }
 
     init {
         moduleScope.launch {
             playerRepo.playerMap.collectLatest { playerMap ->
                 config.getLEDs().forEach {
-                    ledColors[it] = LedColor()
+                    ledColors[it] = LedColor.Dark
                 }
 
                 playerMap.forEach { (sideId, player) ->
