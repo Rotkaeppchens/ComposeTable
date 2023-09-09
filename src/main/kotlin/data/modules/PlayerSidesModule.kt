@@ -1,7 +1,6 @@
 package data.modules
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector4D
+import androidx.compose.animation.core.*
 import data.BaseConfig
 import data.LedAnimationClock
 import data.LedColor
@@ -16,6 +15,11 @@ class PlayerSidesModule(
     ledAnimClock: LedAnimationClock
 ) : LedModule() {
     override val moduleId = "Player Sides"
+
+    private val animSpec: AnimationSpec<LedColor> = tween(
+        durationMillis = 750,
+        easing = Ease
+    )
 
     private val sideColors: Array<Animatable<LedColor, AnimationVector4D>?> = Array(config.getSides().size) { null }
 
@@ -34,7 +38,8 @@ class PlayerSidesModule(
 
                     ledAnimClock.animationScope.launch {
                         sideColors[sideId]?.animateTo(
-                            targetValue = targetColor
+                            targetValue = targetColor,
+                            animationSpec = animSpec
                         )
                     }
                 }
