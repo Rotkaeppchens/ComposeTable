@@ -1,6 +1,7 @@
 package ui.screens
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -158,6 +159,7 @@ fun InfoLine(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ModuleList(
     moduleConfigList: List<ModuleConfig>,
@@ -191,7 +193,9 @@ fun ModuleList(
                 },
                 moveUpEnabled = currentIndex != 0,
                 moveDownEnabled = currentIndex != moduleConfigList.lastIndex,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .animateItemPlacement()
+                    .fillMaxWidth()
             )
         }
     }
