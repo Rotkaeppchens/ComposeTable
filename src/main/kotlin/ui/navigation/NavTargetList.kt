@@ -37,6 +37,11 @@ val NavTargetList = NavListBuilder {
             icon = Icons.Outlined.Bloodtype
             screen = { HealthScreen(modifier = it) }
         }
+        target {
+            title = "Turn"
+            icon = Icons.Outlined.SelfImprovement
+            screen = { TurnScreen(modifier = it) }
+        }
     }
     group("Settings") {
         target {
