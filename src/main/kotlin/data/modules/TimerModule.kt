@@ -115,7 +115,7 @@ class TimerModule(
             TailType.FILL -> 0.0
             TailType.SHORT -> activeLEDs - 10.0
             TailType.LONG -> activeLEDs - 20.0
-        }..activeLEDs + 5.0
+        }..activeLEDs + 10.0
 
         return ledList.mapIndexed { i, ledId ->
             val result = if (i.toDouble() in tailRange) {
@@ -124,7 +124,7 @@ class TimerModule(
                         val tailLedId = i.toDouble() - activeLEDs
                         val ledTailPos = tailLedId / (tailRange.endInclusive - activeLEDs)
 
-                        exp(-4.0 * ledTailPos)
+                        exp(-6.0 * ledTailPos)
                     }
                     tailType == TailType.FILL -> 1.0
                     else -> {
