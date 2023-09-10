@@ -4,6 +4,7 @@ import data.entities.ModuleConfig
 import data.modules.HealthModule
 import data.modules.PlayerSidesModule
 import data.modules.TimerModule
+import data.modules.TurnModule
 import data.repositories.ModuleConfigRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +15,7 @@ class ModuleController(
     private val timerModule: TimerModule,
     private val playerSidesModule: PlayerSidesModule,
     private val healthModule: HealthModule,
+    private val turnModule: TurnModule,
     private val configRepo: ModuleConfigRepository
 ) {
     private val scope = CoroutineScope(Dispatchers.Default)
@@ -47,7 +49,8 @@ class ModuleController(
             val moduleList = listOf(
                 timerModule,
                 playerSidesModule,
-                healthModule
+                healthModule,
+                turnModule
             )
 
             _moduleList.update { moduleList }
