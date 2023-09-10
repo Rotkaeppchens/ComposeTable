@@ -8,17 +8,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
-import ui.screens.*
+import ui.navigation.builder.NavTarget
 
 @Composable
-fun NavigationScreen(
-    navState: NavigationTargets,
+fun NavScreen(
+    navState: NavTarget,
     modifier: Modifier = Modifier
 ) {
     AnimatedContent(
         targetState = navState,
         transitionSpec = {
-            val slideDir = if (targetState.ordinal > initialState.ordinal) {
+            val slideDir = if (targetState.id > initialState.id) {
                 AnimatedContentTransitionScope.SlideDirection.Up
             } else {
                 AnimatedContentTransitionScope.SlideDirection.Down
@@ -38,13 +38,6 @@ fun NavigationScreen(
         },
         modifier = Modifier.fillMaxSize()
     ) {targetState ->
-        when(targetState) {
-            NavigationTargets.STATUS -> StatusScreen(modifier = modifier)
-            NavigationTargets.PLAYERS -> PlayerScreen(modifier = modifier)
-            NavigationTargets.TABLE_SETUP -> TableSetupScreen(modifier = modifier)
-            NavigationTargets.TIMER -> TimerScreen(modifier = modifier)
-            NavigationTargets.HEALTH -> HealthScreen(modifier = modifier)
-            NavigationTargets.SETTINGS -> SettingsScreen(modifier = modifier)
-        }
+        targetState.screen(modifier)
     }
 }

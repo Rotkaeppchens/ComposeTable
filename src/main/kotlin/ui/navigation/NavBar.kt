@@ -1,32 +1,33 @@
 package ui.navigation
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import ui.theme.AppTheme
+import ui.navigation.builder.NavTarget
 
 @Composable
 fun NavBar(
-    navTarget: NavigationTargets,
+    navTarget: NavTarget,
     onExitClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    onNavTargetClicked: (target: NavigationTargets) -> Unit
+    onNavTargetClicked: (target: NavTarget) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
@@ -45,57 +46,19 @@ fun NavBar(
                 },
             )
     ) {
-        NavItem(
-            navTarget = NavigationTargets.STATUS,
-            currentNavTarget = navTarget,
-            title = "Status",
-            icon = Icons.Outlined.BlurOn,
-            onNavTargetClicked = onNavTargetClicked
-        )
+        NavTargetList.targetList.forEach { (_, targets) ->
+            targets.forEach { target ->
+                NavItem(
+                    navTarget = target,
+                    currentNavTarget = navTarget,
+                    title = target.title,
+                    icon = target.icon,
+                    onNavTargetClicked = onNavTargetClicked
+                )
+            }
+            Spacer(Modifier.height(16.dp))
+        }
 
-        Spacer(Modifier.height(16.dp))
-
-        NavItem(
-            navTarget = NavigationTargets.PLAYERS,
-            currentNavTarget = navTarget,
-            title = "Players",
-            icon = Icons.Outlined.Person,
-            onNavTargetClicked = onNavTargetClicked
-        )
-        NavItem(
-            navTarget = NavigationTargets.TABLE_SETUP,
-            currentNavTarget = navTarget,
-            title = "Table",
-            icon = Icons.Outlined.Hexagon,
-            onNavTargetClicked = onNavTargetClicked
-        )
-
-        Spacer(Modifier.height(16.dp))
-
-        NavItem(
-            navTarget = NavigationTargets.TIMER,
-            currentNavTarget = navTarget,
-            title = "Timer",
-            icon = Icons.Outlined.Timer,
-            onNavTargetClicked = onNavTargetClicked
-        )
-        NavItem(
-            navTarget = NavigationTargets.HEALTH,
-            currentNavTarget = navTarget,
-            title = "Health",
-            icon = Icons.Outlined.Bloodtype,
-            onNavTargetClicked = onNavTargetClicked
-        )
-
-        Spacer(Modifier.height(16.dp))
-
-        NavItem(
-            navTarget = NavigationTargets.SETTINGS,
-            currentNavTarget = navTarget,
-            title = "Settings",
-            icon = Icons.Outlined.Settings,
-            onNavTargetClicked = onNavTargetClicked
-        )
         NavigationRailItem(
             selected = false,
             onClick = onExitClicked,
@@ -114,11 +77,11 @@ fun NavBar(
 
 @Composable
 fun NavItem(
-    navTarget: NavigationTargets,
-    currentNavTarget: NavigationTargets,
+    navTarget: NavTarget,
+    currentNavTarget: NavTarget,
     title: String,
     icon: ImageVector,
-    onNavTargetClicked: (target: NavigationTargets) -> Unit,
+    onNavTargetClicked: (target: NavTarget) -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavigationRailItem(
@@ -135,16 +98,4 @@ fun NavItem(
         },
         modifier = modifier
     )
-}
-
-@Preview
-@Composable
-fun NavBarPreview() {
-    AppTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            NavBar(NavigationTargets.STATUS, onExitClicked = {}) {  }
-        }
-    }
 }
