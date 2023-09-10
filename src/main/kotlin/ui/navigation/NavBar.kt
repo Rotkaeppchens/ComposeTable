@@ -69,9 +69,6 @@ fun NavBar(
                     imageVector = Icons.Outlined.Close,
                     contentDescription = null
                 )
-            },
-            label = {
-                Text(text = "Exit")
             }
         )
     }
