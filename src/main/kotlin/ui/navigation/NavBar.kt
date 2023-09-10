@@ -4,8 +4,9 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -34,6 +35,7 @@ fun NavBar(
 
     NavigationRail (
         modifier = modifier
+            .width(IntrinsicSize.Min)
             .verticalScroll(
                 state = scrollState,
             )
@@ -56,7 +58,7 @@ fun NavBar(
                     onNavTargetClicked = onNavTargetClicked
                 )
             }
-            Spacer(Modifier.height(16.dp))
+            NavDivider()
         }
 
         NavigationRailItem(
@@ -97,5 +99,15 @@ fun NavItem(
             Text(text = title)
         },
         modifier = modifier
+    )
+}
+
+@Composable
+fun NavDivider(
+    modifier: Modifier = Modifier
+) {
+    Divider(
+        modifier = modifier
+            .padding(vertical = 4.dp, horizontal = 8.dp)
     )
 }
