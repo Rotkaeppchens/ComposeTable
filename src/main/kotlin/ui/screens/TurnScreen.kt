@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import data.entities.Player
+import data.modules.TurnModule
 import org.koin.compose.koinInject
 import ui.toColor
 import view_models.TurnViewModel
@@ -39,6 +40,8 @@ fun TurnScreen(
         onSetPseudoRandomActive = { viewModel.setPseudoRandomActive(it) },
         onNextClicked = { viewModel.setNextPlayerActive() },
         onSetTableOrder = { viewModel.setOrderFromTable() },
+        randomAnimType = uiState.randomAnimType,
+        onSetRandomAnimType = { viewModel.setRandomAnimType(it) },
         modifier = modifier
     )
 }
@@ -52,6 +55,8 @@ fun TurnScreen(
     onSetPseudoRandomActive: (Int) -> Unit,
     onNextClicked: () -> Unit,
     onSetTableOrder: () -> Unit,
+    randomAnimType: TurnModule.RandomAnimationType,
+    onSetRandomAnimType: (TurnModule.RandomAnimationType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -88,32 +93,38 @@ fun TurnScreen(
         },
         modifier = modifier
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .width(300.dp)
-                .padding(it)
-        ) {
-            Button(
-                onClick = onSetTableOrder,
-                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                modifier = Modifier.padding(8.dp)
+        Row {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .width(300.dp)
+                    .padding(it)
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.Hexagon,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                Button(
+                    onClick = onSetTableOrder,
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Hexagon,
+                        contentDescription = null,
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text("Table Order")
+                }
+                Divider()
+                TurnList(
+                    activePlayerId = activePlayerId,
+                    playerList = playerList,
+                    onSetActivePlayer = onSetActivePlayer,
+                    onSetPseudoRandomActive = onSetPseudoRandomActive,
+                    modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text("Table Order")
             }
-            Divider()
-            TurnList(
-                activePlayerId = activePlayerId,
-                playerList = playerList,
-                onSetActivePlayer = onSetActivePlayer,
-                onSetPseudoRandomActive = onSetPseudoRandomActive,
-                modifier = Modifier.fillMaxWidth()
+            RandomTypeSelect(
+                type = randomAnimType,
+                onSetType = onSetRandomAnimType
             )
         }
     }
@@ -199,6 +210,37 @@ fun PlayerItem(
                 imageVector = Icons.Outlined.Shuffle,
                 contentDescription = null
             )
+        }
+    }
+}
+
+@Composable
+fun RandomTypeSelect(
+    type: TurnModule.RandomAnimationType,
+    onSetType: (TurnModule.RandomAnimationType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text("Anim Type:")
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = type == TurnModule.RandomAnimationType.FLASH_SIDES,
+                onClick = { onSetType(TurnModule.RandomAnimationType.FLASH_SIDES) }
+            )
+            Text("FLASH_SIDES")
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = type == TurnModule.RandomAnimationType.DOUBLE_INDICATOR,
+                onClick = { onSetType(TurnModule.RandomAnimationType.DOUBLE_INDICATOR) }
+            )
+            Text("DOUBLE_INDICATOR")
         }
     }
 }
