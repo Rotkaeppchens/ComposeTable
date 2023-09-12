@@ -73,7 +73,7 @@ class TurnModule(
                     playerRepo.playerChunks.value[player]?.forEach { chunk ->
                         chunk.forEachIndexed { i, ledId ->
                             if (i % 2 == 0) {
-                                ledFilter[ledId] = LedColor(alpha = 0.5)
+                                ledFilter[ledId] = LedColor(alpha = 0.8)
                             }
                         }
                     }
