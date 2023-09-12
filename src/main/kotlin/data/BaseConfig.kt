@@ -12,6 +12,9 @@ class BaseConfig {
         .build()
         .loadConfigOrThrow<Config>()
 
+    val ledCount: Int
+        get() = config.ledService.ledCount
+
     fun getLEDs(): List<Int> {
         return (0 until config.ledService.ledCount).toList()
     }
