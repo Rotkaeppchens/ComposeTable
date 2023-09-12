@@ -5,7 +5,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Hexagon
@@ -17,10 +18,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import data.entities.Player
 import org.koin.compose.koinInject
+import ui.toColor
 import view_models.TurnViewModel
 
 @Composable
@@ -132,12 +133,11 @@ fun TurnList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
     ) {
-        itemsIndexed(
+        items(
             items = playerList,
-            key = { _, item -> item.id }
-        ) { i, player ->
+            key = { item -> item.id }
+        ) { player ->
             PlayerItem(
-                index = i,
                 item = player,
                 isActive = player.id == activePlayerId,
                 onSetActive = { onSetActivePlayer(player.id) },
@@ -152,7 +152,6 @@ fun TurnList(
 
 @Composable
 fun PlayerItem(
-    index: Int,
     item: Player,
     isActive: Boolean,
     onSetActive: () -> Unit,
@@ -173,11 +172,12 @@ fun PlayerItem(
             )
             .padding(start = 8.dp)
     ) {
-        Text(
-            text = index.toString(),
-            fontStyle = FontStyle.Italic,
-            style = MaterialTheme.typography.bodyMedium
-        )
+        Surface(
+            color = item.color.toColor(),
+            shape = CircleShape,
+            modifier = Modifier
+                .size(15.dp)
+        ) {}
         Spacer(Modifier.width(8.dp))
         Text(
             text = item.name,
