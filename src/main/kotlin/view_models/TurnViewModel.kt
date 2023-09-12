@@ -24,7 +24,13 @@ class TurnViewModel(
         playerList = emptyList()
     ))
 
-    fun setPlayerActive(playerId: Int) = turnModule.setActivePlayer(playerId)
+    fun setPlayerActive(playerId: Int) {
+        if (turnModule.activePlayer.value?.id == playerId) {
+            turnModule.resetActivePlayer()
+        } else {
+            turnModule.setActivePlayer(playerId)
+        }
+    }
     fun setRandomPlayerActive() = turnModule.setRandomPlayerActive()
     fun setPseudoRandomActive(playerId: Int) = turnModule.startPseudoRandomAnimation(playerId)
     fun setNextPlayerActive() = turnModule.setNextPlayerActive()

@@ -120,6 +120,10 @@ class TurnModule(
         setActivePlayer(nextPlayerId.id)
     }
 
+    fun resetActivePlayer() {
+        setActivePlayer(0)
+    }
+
     fun setActivePlayer(playerId: Int) {
         _activePlayerId.update { playerId }
     }
