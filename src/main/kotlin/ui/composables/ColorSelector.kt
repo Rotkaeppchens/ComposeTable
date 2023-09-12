@@ -16,7 +16,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.dp
 import ui.theme.AppTheme
 
@@ -151,13 +152,10 @@ fun ColorSliderInput(
 }
 
 fun DrawScope.drawCheckerPattern(
-    tileSizeDp: Dp = 6.dp,
     topLeft: Offset = Offset(0f, 0f),
-    bottomRight: Size = Size(size.width, size.height),
-    darkColor: Color = Color.hsl(0f, 0f, 0.8f),
-    lightColor: Color = Color.hsl(1f, 1f, 1f)
+    bottomRight: Size = Size(size.width, size.height)
 ) {
-    val tileSize: Float = tileSizeDp.toPx()
+    val backgroundImage = useResource("drawables/backgrounds/checkerboard.gif") { loadImageBitmap(it) }
 
     clipRect(
         left = topLeft.x,
@@ -165,15 +163,14 @@ fun DrawScope.drawCheckerPattern(
         right = bottomRight.width,
         bottom = bottomRight.height
     ) {
-        val tilesHorizontal = 0..(bottomRight.width / tileSize).toInt()
-        val tilesVertical = 0..(bottomRight.height / tileSize).toInt()
+        val tilesHorizontal = 0..(bottomRight.width / backgroundImage.width).toInt()
+        val tilesVertical = 0..(bottomRight.height / backgroundImage.height).toInt()
 
         tilesHorizontal.forEach { i ->
             tilesVertical.forEach { j ->
-                drawRect(
-                    topLeft = Offset(i * tileSize, j * tileSize),
-                    color = if ((i + j) % 2 == 0) darkColor else lightColor,
-                    size = Size(tileSize, tileSize)
+                drawImage(
+                    image = backgroundImage,
+                    topLeft = Offset((i * backgroundImage.width).toFloat(), (j * backgroundImage.height).toFloat())
                 )
             }
         }
