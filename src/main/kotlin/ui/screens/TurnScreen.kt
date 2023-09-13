@@ -3,12 +3,12 @@ package ui.screens
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Hexagon
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowRight
 import androidx.compose.material.icons.outlined.Shuffle
@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import data.entities.Player
 import data.modules.TurnModule
@@ -177,10 +178,9 @@ fun PlayerItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .background(
-                backgroundColor,
-                shape = MaterialTheme.shapes.medium
-            )
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(onClick = onSetActive)
+            .background(backgroundColor)
             .padding(start = 8.dp)
     ) {
         Surface(
@@ -195,14 +195,6 @@ fun PlayerItem(
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f)
         )
-        IconButton(
-            onClick = onSetActive
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Check,
-                contentDescription = null
-            )
-        }
         IconButton(
             onClick = onSetPseudoRandomActive
         ) {
