@@ -2,6 +2,9 @@ package data.repositories
 
 import data.database.tables.ModuleConfigTable
 import data.entities.ModuleConfig
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.replace
@@ -9,13 +12,28 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class ModuleConfigRepository {
-    fun getModuleList(): List<ModuleConfig> {
-        return transaction {
-            ModuleConfigTable.selectAll().map {
+    private val _moduleConfigs: MutableStateFlow<List<ModuleConfig>> = MutableStateFlow(emptyList())
+
+    val moduleConfigs: StateFlow<List<ModuleConfig>>
+        get() = _moduleConfigs
+
+    val moduleConfigMap: StateFlow<Map<String, ModuleConfig>> = _moduleConfigs.map { list ->
+        list.associateBy { it.id }
+    }.stateIn(CoroutineScope(Dispatchers.Default), SharingStarted.Eagerly, emptyMap())
+
+    init {
+        transaction {
+            loadModuleList()
+        }
+    }
+
+    private fun loadModuleList() {
+        _moduleConfigs.update {
+            ModuleConfigTable.selectAll().map { row ->
                 ModuleConfig(
-                    id = it[ModuleConfigTable.id],
-                    enabled = it[ModuleConfigTable.enabled],
-                    priority = it[ModuleConfigTable.priority],
+                    id = row[ModuleConfigTable.id],
+                    enabled = row[ModuleConfigTable.enabled],
+                    priority = row[ModuleConfigTable.priority],
                 )
             }
         }
@@ -28,12 +46,15 @@ class ModuleConfigRepository {
                 it[enabled] = config.enabled
                 it[priority] = config.priority
             }
+
+            loadModuleList()
         }
     }
 
     fun deleteModule(moduleId: String) {
         transaction {
             ModuleConfigTable.deleteWhere { id eq moduleId }
+            loadModuleList()
         }
     }
 
