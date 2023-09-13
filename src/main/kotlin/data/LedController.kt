@@ -51,7 +51,7 @@ class LedController(
                 // Render eventual animations
                 ledAnimClock.clock.sendFrame(now)
 
-                val moduleList = moduleController.moduleList.value.map {
+                val moduleList = moduleController.sortedModuleList.value.map {
                     it.onUpdate(now)
                 }
 

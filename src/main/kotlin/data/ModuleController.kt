@@ -1,10 +1,6 @@
 package data
 
 import data.entities.ModuleConfig
-import data.modules.HealthModule
-import data.modules.PlayerSidesModule
-import data.modules.TimerModule
-import data.modules.TurnModule
 import data.repositories.ModuleConfigRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,15 +8,11 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ModuleController(
-    private val timerModule: TimerModule,
-    private val playerSidesModule: PlayerSidesModule,
-    private val healthModule: HealthModule,
-    private val turnModule: TurnModule,
+    private val moduleList: List<LedModule>,
     private val configRepo: ModuleConfigRepository
 ) {
     private val scope = CoroutineScope(Dispatchers.Default)
 
-    private val _moduleList: MutableStateFlow<List<LedModule>> = MutableStateFlow(emptyList())
     private val _moduleConfigMap: MutableStateFlow<Map<String, ModuleConfig>> = MutableStateFlow(emptyMap())
 
     val moduleConfigList: StateFlow<List<ModuleConfig>> = _moduleConfigMap.map { map ->
@@ -29,11 +21,8 @@ class ModuleController(
         }.sortedBy { it.priority }
     }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    val moduleList: StateFlow<List<LedModule>> = combine(
-        _moduleList,
-        _moduleConfigMap
-    ) { modules, configs ->
-        modules.mapNotNull {
+    val sortedModuleList: StateFlow<List<LedModule>> = _moduleConfigMap.map { configs ->
+        moduleList.mapNotNull {
             val enabled = configs[it.moduleId]?.enabled ?: false
             if (enabled) it else null
         }.sortedBy {
@@ -44,16 +33,6 @@ class ModuleController(
     init {
         scope.launch {
             loadModuleList()
-
-            // Load Modules
-            val moduleList = listOf(
-                timerModule,
-                playerSidesModule,
-                healthModule,
-                turnModule
-            )
-
-            _moduleList.update { moduleList }
 
             // Load Module Priorities
             _moduleConfigMap.value.filterKeys { moduleId ->

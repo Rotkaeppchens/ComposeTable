@@ -12,8 +12,15 @@ import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.module
 
 val dataModule = module {
+    // Special bind for the list of LedModules in the module controller
+    single {
+        ModuleController(
+            moduleList = getAll(),
+            configRepo = get()
+        )
+    }
+
     singleOf(::BaseConfig)
-    singleOf(::ModuleController)
     singleOf(::LedAnimationClock)
     singleOf(::LedController) withOptions { createdAtStart() }
 
