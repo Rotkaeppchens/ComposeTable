@@ -2,10 +2,15 @@ package ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
@@ -24,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import data.modules.HealthModule
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import ui.composables.IntegerInputDialog
 import view_models.HealthViewModel
@@ -52,12 +58,24 @@ fun HealthScreen(
     tileWidth: Dp = 250.dp,
     modifier: Modifier = Modifier
 ) {
+    val scope = rememberCoroutineScope()
+    val gridState = rememberLazyGridState()
+
     LazyVerticalGrid(
+        state = gridState,
         columns = GridCells.Adaptive(tileWidth),
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
+            .draggable(
+                state = rememberDraggableState { delta ->
+                    scope.launch {
+                        gridState.scrollBy(-delta)
+                    }
+                },
+                orientation = Orientation.Vertical
+            )
     ) {
         items(playerList) { item ->
             PlayerItem(
