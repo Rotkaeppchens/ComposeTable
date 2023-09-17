@@ -19,7 +19,7 @@ data class LedColor(
         )
     }
 
-    fun blend(color: LedColor): LedColor = LedColorMixer::blend.invoke(this, color)
+    fun blend(color: LedColor): LedColor = LedColorMixer.blend(this, color)
 
     companion object {
         val Dark: LedColor = LedColor(red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0)
