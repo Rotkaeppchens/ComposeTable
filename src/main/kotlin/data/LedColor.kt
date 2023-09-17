@@ -24,6 +24,7 @@ data class LedColor(
     companion object {
         val Transparent: LedColor = LedColor(red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0)
         val White: LedColor = LedColor(red = 1.0, green = 1.0, blue = 1.0, alpha = 1.0)
+        val Black: LedColor = LedColor(red = 0.0, green = 0.0, blue = 0.0, alpha = 1.0)
     }
 
     class VectorConverter: TwoWayConverter<LedColor, AnimationVector4D> {
