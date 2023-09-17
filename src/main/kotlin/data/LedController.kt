@@ -1,6 +1,5 @@
 package data
 
-import com.github.mbelling.ws281x.Color
 import com.github.mbelling.ws281x.LedStrip
 import com.github.mbelling.ws281x.Ws281xLedStrip
 import kotlinx.coroutines.CoroutineScope
@@ -65,11 +64,7 @@ class LedController(
 
                 strip?.let {
                     colors.forEachIndexed { i, color ->
-                        it.setPixel(i, Color(
-                            color.finalRed,
-                            color.finalGreen,
-                            color.finalBlue
-                        ))
+                        it.setPixel(i, color.toStripColor())
                     }
 
                     it.render()

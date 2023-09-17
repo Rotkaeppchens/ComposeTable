@@ -2,6 +2,7 @@ package data
 
 import androidx.compose.animation.core.AnimationVector4D
 import androidx.compose.animation.core.TwoWayConverter
+import com.github.mbelling.ws281x.Color
 import kotlin.math.roundToInt
 
 data class LedColor(
@@ -10,9 +11,13 @@ data class LedColor(
     val blue: Double = 0.0,
     val alpha: Double = 0.0
 ) {
-    val finalRed: Int = (red * alpha * 255).roundToInt()
-    val finalGreen: Int = (green * alpha * 255).roundToInt()
-    val finalBlue: Int = (blue * alpha * 255).roundToInt()
+    fun toStripColor(): Color {
+        return Color(
+            /* red = */ (red * alpha * 255).roundToInt(),
+            /* green = */ (green * alpha * 255).roundToInt(),
+            /* blue = */ (blue * alpha * 255).roundToInt()
+        )
+    }
 
     fun blend(color: LedColor): LedColor = LedColorMixer::blend.invoke(this, color)
 
