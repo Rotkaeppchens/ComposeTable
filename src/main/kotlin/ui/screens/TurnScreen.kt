@@ -1,21 +1,18 @@
 package ui.screens
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Hexagon
-import androidx.compose.material.icons.outlined.KeyboardDoubleArrowRight
-import androidx.compose.material.icons.outlined.Shuffle
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +40,7 @@ fun TurnScreen(
         onSetTableOrder = { viewModel.setOrderFromTable() },
         randomAnimType = uiState.randomAnimType,
         onSetRandomAnimType = { viewModel.setRandomAnimType(it) },
+        onMovePlayer = { playerId, targetPos ->  viewModel.movePlayerPosition(playerId, targetPos) },
         modifier = modifier
     )
 }
@@ -56,6 +54,7 @@ fun TurnScreen(
     onSetPseudoRandomActive: (Int) -> Unit,
     onNextClicked: () -> Unit,
     onSetTableOrder: () -> Unit,
+    onMovePlayer: (fromPos: Int, targetPos: Int) -> Unit,
     randomAnimType: TurnModule.RandomAnimationType,
     onSetRandomAnimType: (TurnModule.RandomAnimationType) -> Unit,
     modifier: Modifier = Modifier
@@ -120,6 +119,7 @@ fun TurnScreen(
                     playerList = playerList,
                     onSetActivePlayer = onSetActivePlayer,
                     onSetPseudoRandomActive = onSetPseudoRandomActive,
+                    onMovePlayer = onMovePlayer,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -138,22 +138,46 @@ fun TurnList(
     playerList: List<Player>,
     onSetActivePlayer: (Int) -> Unit,
     onSetPseudoRandomActive: (Int) -> Unit,
+    onMovePlayer: (fromPos: Int, targetPos: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var editTarget by remember { mutableStateOf<Int?>(null) }
+
     LazyColumn(
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
     ) {
-        items(
+        itemsIndexed(
             items = playerList,
-            key = { item -> item.id }
-        ) { player ->
+            key = { _, item -> item.id }
+        ) { i, player ->
+            val target = editTarget
+
+            val reorderItemState = when {
+                target == null -> ReorderItemState.DEFAULT
+                target == i -> ReorderItemState.REORDER_ACTIVE
+                target > i -> ReorderItemState.ABOVE_TARGET
+                else -> ReorderItemState.BELOW_TARGET
+            }
+
             PlayerItem(
                 item = player,
                 isActive = player.id == activePlayerId,
                 onSetActive = { onSetActivePlayer(player.id) },
                 onSetPseudoRandomActive = { onSetPseudoRandomActive(player.id) },
+                itemReorderState = reorderItemState,
+                onReorderClicked = {
+                    editTarget = when (reorderItemState) {
+                        ReorderItemState.ABOVE_TARGET,
+                        ReorderItemState.BELOW_TARGET -> {
+                            target?.let { onMovePlayer(it, i) }
+                            null
+                        }
+                        ReorderItemState.REORDER_ACTIVE -> null
+                        ReorderItemState.DEFAULT -> i
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .animateItemPlacement()
@@ -168,6 +192,8 @@ fun PlayerItem(
     isActive: Boolean,
     onSetActive: () -> Unit,
     onSetPseudoRandomActive: () -> Unit,
+    itemReorderState: ReorderItemState,
+    onReorderClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val backgroundColor by animateColorAsState(
@@ -181,8 +207,12 @@ fun PlayerItem(
             .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onSetActive)
             .background(backgroundColor)
-            .padding(start = 8.dp)
     ) {
+        IconButton(
+            onClick = onReorderClicked
+        ) {
+            ReorderIcon(itemReorderState)
+        }
         Surface(
             color = item.color.toColor(),
             shape = CircleShape,
@@ -204,6 +234,36 @@ fun PlayerItem(
             )
         }
     }
+}
+
+@Composable
+fun ReorderIcon(
+    state: ReorderItemState,
+    modifier: Modifier = Modifier
+) {
+    AnimatedContent(
+        targetState = state,
+        modifier = modifier
+    ) { target ->
+        val targetDrawable = when (target) {
+            ReorderItemState.ABOVE_TARGET -> Icons.Outlined.ArrowUpward
+            ReorderItemState.BELOW_TARGET -> Icons.Outlined.ArrowDownward
+            ReorderItemState.REORDER_ACTIVE -> Icons.Outlined.Cancel
+            ReorderItemState.DEFAULT -> Icons.Outlined.Reorder
+        }
+
+        Icon(
+            imageVector = targetDrawable,
+            contentDescription = null
+        )
+    }
+}
+
+enum class ReorderItemState {
+    ABOVE_TARGET,
+    BELOW_TARGET,
+    REORDER_ACTIVE,
+    DEFAULT
 }
 
 @Composable

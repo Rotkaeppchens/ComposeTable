@@ -33,6 +33,14 @@ class TurnViewModel(
             turnModule.setActivePlayer(playerId)
         }
     }
+    fun movePlayerPosition(from: Int, to: Int) {
+        val newList = uiState.value.playerList.toMutableList()
+
+        val item = newList.removeAt(from)
+        newList.add(to, item)
+
+        turnModule.setPlayerOrder(newList.map { it.id })
+    }
     fun setRandomPlayerActive() = turnModule.setRandomPlayerActive(_randomAnimType.value)
     fun setPseudoRandomActive(playerId: Int) = turnModule.startPseudoRandomAnimation(playerId, _randomAnimType.value)
     fun setNextPlayerActive() = turnModule.setNextPlayerActive()
