@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
@@ -60,68 +61,60 @@ fun TurnScreen(
     onSetRandomAnimType: (TurnModule.RandomAnimationType) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        floatingActionButton = {
-            Column(
-                horizontalAlignment = Alignment.End
-            ) {
-                ExtendedFloatingActionButton(
-                    text = {
-                        Text("Random")
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Shuffle,
-                            contentDescription = null
-                        )
-                    },
-                    onClick = onSetRandomPlayerActive
-                )
-            }
-        },
+    Row(
         modifier = modifier
     ) {
-        Row {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .width(300.dp)
-                    .padding(it)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .width(300.dp)
+        ) {
+            Button(
+                onClick = onSetTableOrder,
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                modifier = Modifier.padding(8.dp)
             ) {
-                Button(
-                    onClick = onSetTableOrder,
-                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Hexagon,
-                        contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    Text("Table Order")
-                }
-                Divider()
-                TurnList(
-                    activePlayerId = activePlayerId,
-                    playerList = playerList,
-                    onSetActivePlayer = onSetActivePlayer,
-                    onSetPseudoRandomActive = onSetPseudoRandomActive,
-                    onMovePlayer = onMovePlayer,
-                    modifier = Modifier.fillMaxWidth()
+                Icon(
+                    imageVector = Icons.Outlined.Hexagon,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
                 )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text("Table Order")
             }
-            Column {
-                TurnButtons(
-                    onPreviousClicked = { onNextClicked(false) },
-                    onNextClicked = { onNextClicked(true) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                RandomTypeSelect(
-                    type = randomAnimType,
-                    onSetType = onSetRandomAnimType
-                )
-            }
+            Divider()
+            TurnList(
+                activePlayerId = activePlayerId,
+                playerList = playerList,
+                onSetActivePlayer = onSetActivePlayer,
+                onSetPseudoRandomActive = onSetPseudoRandomActive,
+                onMovePlayer = onMovePlayer,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        Column(
+            modifier = Modifier.fillMaxHeight()
+        ) {
+            TurnButtons(
+                onPreviousClicked = { onNextClicked(false) },
+                onNextClicked = { onNextClicked(true) },
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            )
+            Divider(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth()
+            )
+            RandomSelector(
+                animType = randomAnimType,
+                onSetAnimType = onSetRandomAnimType,
+                onStartRandomSelector = onSetRandomPlayerActive,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            )
         }
     }
 }
@@ -268,6 +261,7 @@ fun TurnButtons(
     modifier: Modifier = Modifier
 ) {
     Row(
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier
             .padding(8.dp)
@@ -316,32 +310,71 @@ fun TurnButton(
 }
 
 @Composable
+fun RandomSelector(
+    animType: TurnModule.RandomAnimationType,
+    onSetAnimType: (TurnModule.RandomAnimationType) -> Unit,
+    onStartRandomSelector: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+    ) {
+        RandomTypeSelect(
+            type = animType,
+            onSetType = onSetAnimType
+        )
+        Spacer(Modifier.height(8.dp))
+        Button(
+            onClick = onStartRandomSelector,
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Shuffle,
+                contentDescription = "Random",
+                modifier = Modifier.size(ButtonDefaults.IconSize)
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text("Random")
+        }
+    }
+}
+
+@Composable
 fun RandomTypeSelect(
     type: TurnModule.RandomAnimationType,
     onSetType: (TurnModule.RandomAnimationType) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.selectableGroup()
     ) {
-        Text("Anim Type:")
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            RadioButton(
-                selected = type == TurnModule.RandomAnimationType.FLASH_SIDES,
-                onClick = { onSetType(TurnModule.RandomAnimationType.FLASH_SIDES) }
-            )
-            Text("FLASH_SIDES")
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+        TextButton(
+            onClick = { onSetType(TurnModule.RandomAnimationType.DOUBLE_INDICATOR) },
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding
         ) {
             RadioButton(
                 selected = type == TurnModule.RandomAnimationType.DOUBLE_INDICATOR,
-                onClick = { onSetType(TurnModule.RandomAnimationType.DOUBLE_INDICATOR) }
+                onClick = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize)
             )
-            Text("DOUBLE_INDICATOR")
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text("Rat Race")
+        }
+        TextButton(
+            onClick = { onSetType(TurnModule.RandomAnimationType.FLASH_SIDES) },
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+        ) {
+            RadioButton(
+                selected = type == TurnModule.RandomAnimationType.FLASH_SIDES,
+                onClick = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize)
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text("Flash Sides")
         }
     }
 }
