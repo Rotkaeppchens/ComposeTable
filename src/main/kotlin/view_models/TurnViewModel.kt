@@ -43,7 +43,7 @@ class TurnViewModel(
     }
     fun setRandomPlayerActive() = turnModule.setRandomPlayerActive(_randomAnimType.value)
     fun setPseudoRandomActive(playerId: Int) = turnModule.startPseudoRandomAnimation(playerId, _randomAnimType.value)
-    fun setNextPlayerActive() = turnModule.setNextPlayerActive()
+    fun setNextPlayerActive(forward: Boolean) = turnModule.setNextPlayerActive(forward)
     fun setOrderFromTable() = turnModule.setPlayerOrderFromTable()
 
     fun setRandomAnimType(type: TurnModule.RandomAnimationType) {

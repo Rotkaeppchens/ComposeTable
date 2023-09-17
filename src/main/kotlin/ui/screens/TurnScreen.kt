@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import data.entities.Player
 import data.modules.TurnModule
@@ -36,7 +37,7 @@ fun TurnScreen(
         onSetActivePlayer = { viewModel.setPlayerActive(it) },
         onSetRandomPlayerActive = { viewModel.setRandomPlayerActive() },
         onSetPseudoRandomActive = { viewModel.setPseudoRandomActive(it) },
-        onNextClicked = { viewModel.setNextPlayerActive() },
+        onNextClicked = { viewModel.setNextPlayerActive(it) },
         onSetTableOrder = { viewModel.setOrderFromTable() },
         randomAnimType = uiState.randomAnimType,
         onSetRandomAnimType = { viewModel.setRandomAnimType(it) },
@@ -52,7 +53,7 @@ fun TurnScreen(
     onSetActivePlayer: (Int) -> Unit,
     onSetRandomPlayerActive: () -> Unit,
     onSetPseudoRandomActive: (Int) -> Unit,
-    onNextClicked: () -> Unit,
+    onNextClicked: (forward: Boolean) -> Unit,
     onSetTableOrder: () -> Unit,
     onMovePlayer: (fromPos: Int, targetPos: Int) -> Unit,
     randomAnimType: TurnModule.RandomAnimationType,
@@ -64,19 +65,6 @@ fun TurnScreen(
             Column(
                 horizontalAlignment = Alignment.End
             ) {
-                ExtendedFloatingActionButton(
-                    text = {
-                        Text("Next")
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Outlined.KeyboardDoubleArrowRight,
-                            contentDescription = null
-                        )
-                    },
-                    onClick = onNextClicked
-                )
-                Spacer(Modifier.height(8.dp))
                 ExtendedFloatingActionButton(
                     text = {
                         Text("Random")
@@ -123,10 +111,17 @@ fun TurnScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            RandomTypeSelect(
-                type = randomAnimType,
-                onSetType = onSetRandomAnimType
-            )
+            Column {
+                TurnButtons(
+                    onPreviousClicked = { onNextClicked(false) },
+                    onNextClicked = { onNextClicked(true) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                RandomTypeSelect(
+                    type = randomAnimType,
+                    onSetType = onSetRandomAnimType
+                )
+            }
         }
     }
 }
@@ -264,6 +259,60 @@ enum class ReorderItemState {
     BELOW_TARGET,
     REORDER_ACTIVE,
     DEFAULT
+}
+
+@Composable
+fun TurnButtons(
+    onNextClicked: () -> Unit,
+    onPreviousClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = modifier
+            .padding(8.dp)
+    ) {
+        TurnButton(
+            icon = Icons.Outlined.KeyboardDoubleArrowLeft,
+            title = "Previous",
+            onClick = onPreviousClicked
+        )
+        TurnButton(
+            icon = Icons.Outlined.KeyboardDoubleArrowRight,
+            title = "Next",
+            onClick = onNextClicked
+        )
+    }
+}
+
+@Composable
+fun TurnButton(
+    icon: ImageVector,
+    title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .clip(MaterialTheme.shapes.large)
+            .clickable(onClick = onClick)
+            .size(125.dp)
+            .background(MaterialTheme.colorScheme.primaryContainer)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = title,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            style = MaterialTheme.typography.titleLarge
+        )
+    }
 }
 
 @Composable

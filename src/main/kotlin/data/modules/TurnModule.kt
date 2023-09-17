@@ -142,13 +142,17 @@ class TurnModule(
         setPlayerOrder(map.mapNotNull { it.value?.id })
     }
 
-    fun setNextPlayerActive() {
+    fun setNextPlayerActive(forward: Boolean) {
         val playerOrder = playerList.value
 
         if (playerOrder.isEmpty()) return
 
         val activePlayerIndex = playerOrder.indexOf(activePlayer.value)
-        val nextPlayerId = playerOrder.getOrNull(activePlayerIndex + 1) ?: playerOrder.first()
+        val nextPlayerId = if (forward) {
+            playerOrder.getOrNull(activePlayerIndex + 1) ?: playerOrder.first()
+        } else {
+            playerOrder.getOrNull(activePlayerIndex - 1) ?: playerOrder.last()
+        }
 
         setActivePlayer(nextPlayerId.id)
     }
