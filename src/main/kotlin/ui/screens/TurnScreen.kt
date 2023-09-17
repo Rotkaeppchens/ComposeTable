@@ -40,6 +40,7 @@ fun TurnScreen(
         onSetPseudoRandomActive = { viewModel.setPseudoRandomActive(it) },
         onNextClicked = { viewModel.setNextPlayerActive(it) },
         onSetTableOrder = { viewModel.setOrderFromTable() },
+        onReversePlayerOrder = { viewModel.reversePlayerOrder() },
         randomAnimType = uiState.randomAnimType,
         onSetRandomAnimType = { viewModel.setRandomAnimType(it) },
         onMovePlayer = { playerId, targetPos ->  viewModel.movePlayerPosition(playerId, targetPos) },
@@ -56,6 +57,7 @@ fun TurnScreen(
     onSetPseudoRandomActive: (Int) -> Unit,
     onNextClicked: (forward: Boolean) -> Unit,
     onSetTableOrder: () -> Unit,
+    onReversePlayerOrder: () -> Unit,
     onMovePlayer: (fromPos: Int, targetPos: Int) -> Unit,
     randomAnimType: TurnModule.RandomAnimationType,
     onSetRandomAnimType: (TurnModule.RandomAnimationType) -> Unit,
@@ -65,23 +67,14 @@ fun TurnScreen(
         modifier = modifier
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .width(300.dp)
         ) {
-            Button(
-                onClick = onSetTableOrder,
-                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Hexagon,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
-                )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text("Table Order")
-            }
+            OrderControls(
+                onSetTableOrder = onSetTableOrder,
+                onReversePlayerOrder = onReversePlayerOrder,
+                modifier = Modifier.fillMaxWidth()
+            )
             Divider()
             TurnList(
                 activePlayerId = activePlayerId,
@@ -115,6 +108,44 @@ fun TurnScreen(
                     .weight(1f)
                     .fillMaxWidth()
             )
+        }
+    }
+}
+
+@Composable
+fun OrderControls(
+    onSetTableOrder: () -> Unit,
+    onReversePlayerOrder: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = modifier
+            .padding(8.dp)
+    ) {
+        Button(
+            onClick = onReversePlayerOrder,
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.SwapVert,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize)
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text("Reverse")
+        }
+        Button(
+            onClick = onSetTableOrder,
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Hexagon,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize)
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text("Table Order")
         }
     }
 }
