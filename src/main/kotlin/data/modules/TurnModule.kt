@@ -94,7 +94,7 @@ class TurnModule(
                             val subLedId = ledId - activeLEDs.first
                             val alphaPos = subLedId.toDouble() / 10.0
 
-                            LedColor.Full.copy(
+                            LedColor.White.copy(
                                 alpha = sin(Math.PI * alphaPos)
                             )
                         }
@@ -109,7 +109,7 @@ class TurnModule(
                     val secondHalf = anim.targetChunk.subList(midwayPoint, (midwayPoint + activeLedCnt).coerceAtMost(anim.targetChunk.size))
 
                     Array(config.ledCount) { ledId ->
-                        if (ledId in firstHalf || ledId in secondHalf) LedColor.Full
+                        if (ledId in firstHalf || ledId in secondHalf) LedColor.White
                         else LedColor.Transparent
                     }
                 } else {
@@ -123,7 +123,7 @@ class TurnModule(
                 val ledList = playerRepo.playerChunks.value[activePlayer]?.flatten()?.toSet()
 
                 Array(config.ledCount) { ledId ->
-                    if (ledList?.contains(ledId) == true) LedColor.Full
+                    if (ledList?.contains(ledId) == true) LedColor.White
                     else LedColor.Transparent
                 }
             }
