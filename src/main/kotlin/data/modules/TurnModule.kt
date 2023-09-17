@@ -39,7 +39,7 @@ class TurnModule(
         }
     }.stateIn(moduleScope, SharingStarted.Eagerly, emptyList())
 
-    private val ledFilter = Array(config.ledCount) { LedColor.Dark }
+    private val ledFilter = Array(config.ledCount) { LedColor.Transparent }
 
     private var randomJob: Job? = null
     private var randomAnimation: RandomAnimation? = null
@@ -65,7 +65,7 @@ class TurnModule(
 
         moduleScope.launch {
             activePlayer.collectLatest {
-                ledFilter.fill(LedColor.Dark)
+                ledFilter.fill(LedColor.Transparent)
 
                 it?.let { player ->
                     playerRepo.playerChunks.value[player]?.forEach { chunk ->
@@ -98,7 +98,7 @@ class TurnModule(
                                 alpha = sin(Math.PI * alphaPos)
                             )
                         }
-                        else LedColor.Dark
+                        else LedColor.Transparent
                     }
                 } else if (anim.fillAnimation != null) {
                     val percent = anim.fillAnimation.value
@@ -110,10 +110,10 @@ class TurnModule(
 
                     Array(config.ledCount) { ledId ->
                         if (ledId in firstHalf || ledId in secondHalf) LedColor.Full
-                        else LedColor.Dark
+                        else LedColor.Transparent
                     }
                 } else {
-                    Array(config.ledCount) { LedColor.Dark }
+                    Array(config.ledCount) { LedColor.Transparent }
                 }
             }
             is RandomAnimation.FlashSides -> {
@@ -124,7 +124,7 @@ class TurnModule(
 
                 Array(config.ledCount) { ledId ->
                     if (ledList?.contains(ledId) == true) LedColor.Full
-                    else LedColor.Dark
+                    else LedColor.Transparent
                 }
             }
             null -> ledFilter

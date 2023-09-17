@@ -27,14 +27,14 @@ class PlayerSidesModule(
         moduleScope.launch {
             if (sideColors[0] == null) sideColors.forEachIndexed { i, _ ->
                 sideColors[i] = Animatable(
-                    initialValue = LedColor.Dark,
+                    initialValue = LedColor.Transparent,
                     typeConverter = LedColor.VectorConverter()
                 )
             }
 
             playerRepo.playerMap.collectLatest { playerMap ->
                 playerMap.forEach { (sideId, player) ->
-                    val targetColor = player?.color ?: LedColor.Dark
+                    val targetColor = player?.color ?: LedColor.Transparent
 
                     ledAnimClock.animationScope.launch {
                         sideColors[sideId]?.animateTo(
@@ -48,10 +48,10 @@ class PlayerSidesModule(
     }
 
     override fun onUpdate(nanoTime: Long): Array<LedColor> {
-        val colors = Array(config.config.ledService.ledCount) { LedColor.Dark }
+        val colors = Array(config.config.ledService.ledCount) { LedColor.Transparent }
 
          config.getSides().forEach { sideId ->
-            val sideColor = sideColors[sideId]?.value ?: LedColor.Dark
+            val sideColor = sideColors[sideId]?.value ?: LedColor.Transparent
 
             config.getLEDsForSide(sideId).forEach { colors[it] = sideColor }
         }

@@ -5,7 +5,7 @@ object LedColorMixer {
         val alpha = color0.alpha + color1.alpha * (1 - color0.alpha)
 
         if (alpha == 0.0) {
-            return LedColor.Dark
+            return LedColor.Transparent
         }
 
         val red = addColors(color0.red, color0.alpha, color1.red, color1.alpha) / alpha

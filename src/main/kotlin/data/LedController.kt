@@ -55,8 +55,8 @@ class LedController(
                 }
 
                 val colors = config.getLEDs().map { ledId ->
-                    moduleList.fold(LedColor.Dark) { color, moduleColors ->
-                        return@fold color.blend(moduleColors.getOrElse(ledId) { LedColor.Dark })
+                    moduleList.fold(LedColor.Transparent) { color, moduleColors ->
+                        return@fold color.blend(moduleColors.getOrElse(ledId) { LedColor.Transparent })
                     }
                 }
 

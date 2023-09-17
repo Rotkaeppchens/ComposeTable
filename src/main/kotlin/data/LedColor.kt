@@ -22,8 +22,8 @@ data class LedColor(
     fun blend(color: LedColor): LedColor = LedColorMixer.blend(this, color)
 
     companion object {
-        val Dark: LedColor = LedColor(red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0)
         val Full: LedColor = LedColor(red = 1.0, green = 1.0, blue = 1.0, alpha = 1.0)
+        val Transparent: LedColor = LedColor(red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0)
     }
 
     class VectorConverter: TwoWayConverter<LedColor, AnimationVector4D> {
