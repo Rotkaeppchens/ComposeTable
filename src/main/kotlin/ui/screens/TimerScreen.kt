@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -220,20 +221,23 @@ fun TimerFillType(
     modifier: Modifier = Modifier
 ) {
     Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .selectableGroup()
     ) {
         Text("Fill Type:")
-        RadioButton(
+        Spacer(Modifier.width(8.dp))
+        RadioSelector(
             selected = fillType == TimerModule.FillType.COMPLETE,
-            onClick = { onSetFillType(TimerModule.FillType.COMPLETE) }
+            onClick = { onSetFillType(TimerModule.FillType.COMPLETE) },
+            text = "Complete"
         )
-        Text("Complete")
-        RadioButton(
+        RadioSelector(
             selected = fillType == TimerModule.FillType.SIDES,
-            onClick = { onSetFillType(TimerModule.FillType.SIDES) }
+            onClick = { onSetFillType(TimerModule.FillType.SIDES) },
+            text = "Sides"
         )
-        Text("Sides")
     }
 }
 
@@ -244,25 +248,49 @@ fun TimerTailType(
     modifier: Modifier = Modifier
 ) {
     Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .selectableGroup()
     ) {
         Text("Tail Type:")
-        RadioButton(
+        RadioSelector(
             selected = tailType == TimerModule.TailType.FILL,
-            onClick = { onSetTailType(TimerModule.TailType.FILL) }
+            onClick = { onSetTailType(TimerModule.TailType.FILL) },
+            text = "Fill"
         )
-        Text("Fill")
-        RadioButton(
+        RadioSelector(
             selected = tailType == TimerModule.TailType.SHORT,
-            onClick = { onSetTailType(TimerModule.TailType.SHORT) }
+            onClick = { onSetTailType(TimerModule.TailType.SHORT) },
+            text = "Short"
         )
-        Text("Short")
-        RadioButton(
+        RadioSelector(
             selected = tailType == TimerModule.TailType.LONG,
-            onClick = { onSetTailType(TimerModule.TailType.LONG) }
+            onClick = { onSetTailType(TimerModule.TailType.LONG) },
+            text = "Long"
         )
-        Text("Long")
+    }
+}
+
+@Composable
+fun RadioSelector(
+    selected: Boolean,
+    onClick: () -> Unit,
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    TextButton(
+        onClick = onClick,
+        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+        modifier = modifier
+    ) {
+        RadioButton(
+            selected = selected,
+            onClick = null,
+            modifier = Modifier.size(ButtonDefaults.IconSize)
+        )
+        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+        Text(text)
     }
 }
 
