@@ -24,6 +24,7 @@ import view_models.SettingsViewModel
 
 enum class SettingsNavState {
     INFO,
+    MAIN_LOOP_INFO,
     MODULE_CONFIG
 }
 
@@ -36,6 +37,9 @@ fun SettingsScreen(
 
     SettingsScreen(
         config = uiState.config,
+        loopState = uiState.mainLoopIsActive,
+        onStartLoop = { viewModel.startMainLoop() },
+        onUpdateLoopState = { viewModel.updateLoopState() },
         moduleConfigList = uiState.moduleConfigList,
         onModuleMove = { moduleId, newIndex ->
             viewModel.moveModule(moduleId, newIndex)
@@ -50,6 +54,9 @@ fun SettingsScreen(
 @Composable
 fun SettingsScreen(
     config: BaseConfig.Companion.Config,
+    loopState: Boolean,
+    onStartLoop: () -> Unit,
+    onUpdateLoopState: () -> Unit,
     moduleConfigList: List<ModuleConfig>,
     onModuleMove: (id: String, newIndex: Int) -> Unit,
     onModuleEnable: (moduleId: String, enabled: Boolean) -> Unit,
@@ -68,6 +75,12 @@ fun SettingsScreen(
         ) { state ->
             when(state) {
                 SettingsNavState.INFO -> InfoScreen(config)
+                SettingsNavState.MAIN_LOOP_INFO -> MainLoopInfo(
+                    loopState = loopState,
+                    onStartLoop = onStartLoop,
+                    onUpdateLoopState = onUpdateLoopState,
+                    modifier = modifier
+                )
                 SettingsNavState.MODULE_CONFIG -> ModuleList(
                     moduleConfigList = moduleConfigList,
                     onModuleMove = onModuleMove,
@@ -156,6 +169,38 @@ fun InfoLine(
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyMedium
         )
+    }
+}
+
+@Composable
+fun MainLoopInfo(
+    loopState: Boolean,
+    onStartLoop: () -> Unit,
+    onUpdateLoopState: () -> Unit,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = onUpdateLoopState
+            ) {
+                Text("Update")
+            }
+            Spacer(Modifier.width(8.dp))
+            Switch(
+                checked = loopState,
+                onCheckedChange = null
+            )
+        }
+        Button(
+            onClick = onStartLoop
+        ) {
+            Text("Start Main Loop")
+        }
     }
 }
 
@@ -292,6 +337,19 @@ fun NavBar(
             },
             label = {
                 Text("Info")
+            }
+        )
+        NavigationBarItem(
+            selected = navState == SettingsNavState.MAIN_LOOP_INFO,
+            onClick = { setNavState(SettingsNavState.MAIN_LOOP_INFO) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.AllInclusive,
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text("Main Loop")
             }
         )
         NavigationBarItem(

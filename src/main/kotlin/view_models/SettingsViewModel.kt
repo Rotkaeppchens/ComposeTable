@@ -1,25 +1,31 @@
 package view_models
 
 import data.BaseConfig
+import data.LedController
 import data.ModuleController
 import data.entities.ModuleConfig
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import view_models.base.ViewModel
 
 class SettingsViewModel(
     baseConfig: BaseConfig,
+    private val ledController: LedController,
     private val moduleController: ModuleController
 ) : ViewModel() {
-    val uiState: StateFlow<UiState> = moduleController.moduleConfigList.map {
+    private val _mainLoopIsActive: MutableStateFlow<Boolean> = MutableStateFlow(ledController.loopIsActive)
+
+    val uiState: StateFlow<UiState> = combine(
+        _mainLoopIsActive,
+        moduleController.moduleConfigList
+    ) { mainLoopIsActive, moduleConfigList ->
         UiState(
             config = baseConfig.config,
-            moduleConfigList = it
+            mainLoopIsActive = mainLoopIsActive,
+            moduleConfigList = moduleConfigList
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState(
         config = baseConfig.config,
+        mainLoopIsActive = ledController.loopIsActive,
         moduleConfigList = emptyList()
     ))
 
@@ -40,8 +46,17 @@ class SettingsViewModel(
         )
     }
 
+    fun startMainLoop() = ledController.startLoop()
+
+    fun updateLoopState() {
+        _mainLoopIsActive.update {
+            ledController.loopIsActive
+        }
+    }
+
     data class UiState (
         val config: BaseConfig.Companion.Config,
+        val mainLoopIsActive: Boolean,
         val moduleConfigList: List<ModuleConfig>
     )
 }

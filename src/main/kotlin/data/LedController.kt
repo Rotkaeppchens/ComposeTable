@@ -2,13 +2,10 @@ package data
 
 import com.github.mbelling.ws281x.LedStrip
 import com.github.mbelling.ws281x.Ws281xLedStrip
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class LedController(
     private val config: BaseConfig,
@@ -38,12 +35,18 @@ class LedController(
     val ledState: StateFlow<List<LedColor>>
         get() = _ledState
 
+    private var mainLoopJob: Job? = null
+
+    val loopIsActive: Boolean
+        get() = mainLoopJob?.isActive ?: false
+
     init {
         startLoop()
     }
 
-    private fun startLoop() {
-        CoroutineScope(Dispatchers.Default).launch {
+    fun startLoop() {
+        mainLoopJob?.cancel()
+        mainLoopJob = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
                 val now = System.nanoTime()
 
