@@ -5,6 +5,7 @@ import data.BaseConfig
 import data.LedAnimationClock
 import data.LedColor
 import data.LedModule
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -103,16 +104,18 @@ class EffectsModule(
 
                             0.0f at 0
                             2.0f at 2500
-                            0.0f at 2501
-                            1.0f at 5000 with EaseOutExpo
+                            0.0f at 2501 with EaseOut
+                            1.0f at 5000
                         }
                     )
+
+                    delay(500)
 
                     startEffect.alphaAnim.animateTo(
                         targetValue = 0.0f,
                         animationSpec = tween(
                             durationMillis = 2500,
-                            easing = Ease
+                            easing = EaseIn
                         )
                     )
 
