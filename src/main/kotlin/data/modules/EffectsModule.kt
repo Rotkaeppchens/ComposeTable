@@ -38,8 +38,8 @@ class EffectsModule(
                     val firstHalf = Array(middlePoint) {
                         when {
                             filling && it < firstHalfBreakPoint -> color
-                            filling && it > firstHalfBreakPoint -> LedColor.Transparent
-                            it < firstHalfBreakPoint -> LedColor.Transparent
+                            filling && it > firstHalfBreakPoint -> LedColor.Black
+                            it < firstHalfBreakPoint -> LedColor.Black
                             else -> color
                         }
                     }
@@ -49,8 +49,8 @@ class EffectsModule(
                     val secondHalf = Array(secondHalfCnt) {
                         when {
                             filling && it < secondHalfBreakPoint -> color
-                            filling && it > secondHalfBreakPoint -> LedColor.Transparent
-                            it < secondHalfBreakPoint -> LedColor.Transparent
+                            filling && it > secondHalfBreakPoint -> LedColor.Black
+                            it < secondHalfBreakPoint -> LedColor.Black
                             else -> color
                         }
                     }
