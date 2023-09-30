@@ -42,6 +42,11 @@ val NavTargetList = NavListBuilder {
             icon = Icons.Outlined.SelfImprovement
             screen = { TurnScreen(modifier = it) }
         }
+        target {
+            title = "Effects"
+            icon = Icons.Outlined.Flare
+            screen = { EffectScreen(modifier = it) }
+        }
     }
     group("Settings") {
         target {
