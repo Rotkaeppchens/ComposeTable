@@ -16,9 +16,8 @@ class EffectsViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState(emptySet()))
 
-    fun startBattle() {
-        effectsModule.startBattle()
-    }
+    fun startBattle() = effectsModule.startBattle()
+    fun endBattle() = effectsModule.endBattle()
 
     data class UiState(
         val activeEffects: Set<EffectsModule.OneShotEffects>

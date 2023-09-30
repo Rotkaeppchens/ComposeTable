@@ -70,17 +70,25 @@ class EffectsModule(
     }
 
     fun startBattle() {
+        battleAnim(LedColor.White, LedColor(1.0, 0.0, 0.0, 1.0))
+    }
+
+    fun endBattle() {
+        battleAnim(LedColor(1.0, 0.0, 0.0, 1.0), LedColor.White)
+    }
+
+    private fun battleAnim(initialColor: LedColor, targetColor: LedColor) {
         if (_activeEffects.value.none { it is OneShotEffects.BattleStart }) {
             _activeEffects.update {
                 val effectSet = it.toMutableSet()
 
-                val startEffect = OneShotEffects.BattleStart()
+                val startEffect = OneShotEffects.BattleStart(initialColor = initialColor)
 
                 val duration = 5000
 
                 animationClock.animationScope.launch {
                     startEffect.colorAnim.animateTo(
-                        targetValue = LedColor(1.0, 0.0, 0.0, 1.0),
+                        targetValue = targetColor,
                         animationSpec = tween(
                             durationMillis = duration,
                             easing = EaseInExpo
@@ -126,8 +134,9 @@ class EffectsModule(
         val name: String
     ) {
         data class BattleStart(
+            val initialColor: LedColor,
             val colorAnim: Animatable<LedColor, AnimationVector4D> = Animatable(
-                initialValue =  LedColor.White,
+                initialValue =  initialColor,
                 typeConverter = LedColor.VectorConverter()
             ),
             val positionAnim: Animatable<Float, AnimationVector1D> = Animatable(

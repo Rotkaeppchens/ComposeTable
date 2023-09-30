@@ -33,6 +33,11 @@ fun EffectScreen(
             ) {
                 Text("Start Battle")
             }
+            Button(
+                onClick = { viewModel.endBattle() }
+            ) {
+                Text("End Battle")
+            }
         }
         ActiveEffectsList(
             uiState.activeEffects,
