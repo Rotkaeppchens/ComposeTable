@@ -39,10 +39,10 @@ class TurnModule(
         }
     }.stateIn(moduleScope, SharingStarted.Eagerly, emptyList())
 
-    private val ledFilter = Array(config.ledCount) { LedColor.Transparent }
-
     private var randomJob: Job? = null
     private var randomAnimation: RandomAnimation? = null
+    private var alphaAnimJob: Job? = null
+    private var alphaAnimation: Animatable<Float, AnimationVector1D> = Animatable(0.0f)
 
     init {
         moduleScope.launch {
@@ -59,22 +59,6 @@ class TurnModule(
                     }
 
                     newOrder
-                }
-            }
-        }
-
-        moduleScope.launch {
-            activePlayer.collectLatest {
-                ledFilter.fill(LedColor.Transparent)
-
-                it?.let { player ->
-                    playerRepo.playerChunks.value[player]?.forEach { chunk ->
-                        chunk.forEachIndexed { i, ledId ->
-                            if (i % 2 == 0) {
-                                ledFilter[ledId] = LedColor(alpha = 0.8)
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -127,7 +111,22 @@ class TurnModule(
                     else LedColor.Transparent
                 }
             }
-            null -> ledFilter
+            null -> {
+                val ledFilter = Array(config.ledCount) { LedColor.Transparent }
+                val alpha = alphaAnimation.value.toDouble()
+
+                activePlayer.value?.let { player ->
+                    playerRepo.playerChunks.value[player]?.forEach { chunk ->
+                        chunk.forEachIndexed { i, ledId ->
+                            if (i % 2 == 0) {
+                                ledFilter[ledId] = LedColor(alpha = 0.8 * alpha)
+                            }
+                        }
+                    }
+                }
+
+                ledFilter
+            }
         }
     }
 
@@ -163,6 +162,21 @@ class TurnModule(
 
     fun setActivePlayer(playerId: Int) {
         _activePlayerId.update { playerId }
+
+        alphaAnimJob?.cancel()
+        alphaAnimJob = ledAnimClock.animationScope.launch {
+            alphaAnimation.snapTo(0f)
+            alphaAnimation.animateTo(
+                targetValue = 1.0f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(
+                        durationMillis = 3000,
+                        easing = Ease
+                    ),
+                    repeatMode = RepeatMode.Reverse
+                )
+            )
+        }
     }
 
     fun setRandomPlayerActive(type: RandomAnimationType) {
