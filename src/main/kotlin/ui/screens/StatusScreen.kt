@@ -1,7 +1,8 @@
 package ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
 import ui.theme.equilateralTriangleShape
+import view_models.EffectsViewModel
 import view_models.StatusViewModel
 
 @Composable
@@ -39,15 +41,29 @@ fun StatusScreen(
     colorMap: Map<Int, List<Color>>,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
+    Row(
         modifier = modifier
             .fillMaxSize()
     ) {
-        TableDisplay(
-            colorMap = colorMap
+        ScreenCardDisplay(
+            modifier = Modifier
+                .width(200.dp)
+                .fillMaxHeight()
         )
+        Divider(
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .width(1.dp)
+                .fillMaxHeight()
+        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            TableDisplay(
+                colorMap = colorMap
+            )
+        }
     }
 }
 
@@ -57,7 +73,8 @@ fun TableDisplay(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier
+        contentAlignment = Alignment.TopCenter,
+        modifier = modifier.size(width = 400.dp, height = 350.dp)
     ) {
         colorMap.forEach { (side, colors) ->
             SideDisplay(
@@ -116,4 +133,46 @@ fun LedStrip(
                 )
             }
     ) {  }
+}
+
+@Composable
+fun ScreenCardDisplay(
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier
+    ) {
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                EffectsCard()
+            }
+        }
+    }
+}
+
+@Composable
+fun EffectsCard(
+    viewModel: EffectsViewModel = koinInject(),
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(8.dp)
+    ) {
+        Button(
+            onClick = { viewModel.startBattle() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Start Battle")
+        }
+        Button(
+            onClick = { viewModel.endBattle() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("End Battle")
+        }
+    }
 }
