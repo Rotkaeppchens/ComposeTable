@@ -13,17 +13,20 @@ class TurnViewModel(
     val uiState: StateFlow<UiState> = combine(
         turnModule.activePlayer,
         turnModule.playerList,
+        turnModule.alphaAnimIsActive,
         _randomAnimType
-    ) { currentPlayer, playerList, randomAnimType ->
+    ) { currentPlayer, playerList, alphaAnimIsActive, randomAnimType ->
         UiState(
             activePlayerId = currentPlayer?.id ?: 0,
             playerList = playerList,
-            randomAnimType = randomAnimType
+            randomAnimType = randomAnimType,
+            alphaAnimIsActive = alphaAnimIsActive
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState(
         activePlayerId = 0,
         playerList = emptyList(),
-        randomAnimType = TurnModule.RandomAnimationType.DOUBLE_INDICATOR
+        randomAnimType = TurnModule.RandomAnimationType.DOUBLE_INDICATOR,
+        alphaAnimIsActive = true
     ))
 
     fun setPlayerActive(playerId: Int) {
@@ -48,10 +51,12 @@ class TurnViewModel(
     fun setOrderFromTable() = turnModule.setPlayerOrderFromTable()
 
     fun setRandomAnimType(type: TurnModule.RandomAnimationType) = _randomAnimType.update { type }
+    fun setAlphaAnimActive(isActive: Boolean) = turnModule.setAlphaAnimActive(isActive)
 
     data class UiState(
         val activePlayerId: Int,
         val playerList: List<Player>,
-        val randomAnimType: TurnModule.RandomAnimationType
+        val randomAnimType: TurnModule.RandomAnimationType,
+        val alphaAnimIsActive: Boolean
     )
 }

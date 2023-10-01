@@ -43,6 +43,9 @@ class TurnModule(
     private var randomAnimation: RandomAnimation? = null
     private var alphaAnimJob: Job? = null
     private var alphaAnimation: Animatable<Float, AnimationVector1D> = Animatable(0.0f)
+    private var _alphaAnimIsActive: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val alphaAnimIsActive: StateFlow<Boolean>
+        get() = _alphaAnimIsActive
 
     init {
         moduleScope.launch {
@@ -113,7 +116,9 @@ class TurnModule(
             }
             null -> {
                 val ledFilter = Array(config.ledCount) { LedColor.Transparent }
-                val alpha = alphaAnimation.value.toDouble()
+                val alpha = if (_alphaAnimIsActive.value) {
+                    alphaAnimation.value.toDouble()
+                } else 1.0
 
                 activePlayer.value?.let { player ->
                     playerRepo.playerChunks.value[player]?.forEach { chunk ->
@@ -129,6 +134,8 @@ class TurnModule(
             }
         }
     }
+
+    fun setAlphaAnimActive(isActive: Boolean) = _alphaAnimIsActive.update { isActive }
 
     fun setPlayerOrder(newOrder: List<Int>) {
         if (!newOrder.containsAll(_playerOrder.value) || !_playerOrder.value.containsAll(newOrder)) return

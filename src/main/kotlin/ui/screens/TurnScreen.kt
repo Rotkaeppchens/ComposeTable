@@ -44,6 +44,8 @@ fun TurnScreen(
         randomAnimType = uiState.randomAnimType,
         onSetRandomAnimType = { viewModel.setRandomAnimType(it) },
         onMovePlayer = { playerId, targetPos ->  viewModel.movePlayerPosition(playerId, targetPos) },
+        alphaAnimActive = uiState.alphaAnimIsActive,
+        onSetAlphaAnimActive = { viewModel.setAlphaAnimActive(it) },
         modifier = modifier
     )
 }
@@ -61,6 +63,8 @@ fun TurnScreen(
     onMovePlayer: (fromPos: Int, targetPos: Int) -> Unit,
     randomAnimType: TurnModule.RandomAnimationType,
     onSetRandomAnimType: (TurnModule.RandomAnimationType) -> Unit,
+    alphaAnimActive: Boolean,
+    onSetAlphaAnimActive: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -105,9 +109,28 @@ fun TurnScreen(
                 onSetAnimType = onSetRandomAnimType,
                 onStartRandomSelector = onSetRandomPlayerActive,
                 modifier = Modifier
-                    .weight(1f)
+                    .padding(vertical = 8.dp)
                     .fillMaxWidth()
             )
+            Divider(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth()
+            )
+            TextButton(
+                onClick = { onSetAlphaAnimActive(!alphaAnimActive) },
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                Switch(
+                    checked = alphaAnimActive,
+                    onCheckedChange = null,
+                )
+                Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                Text("Alpha Animation")
+            }
         }
     }
 }
