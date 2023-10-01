@@ -215,7 +215,7 @@ class TurnModule(
                 RandomAnimationType.DOUBLE_INDICATOR -> {
                     val targetPlayerChunks = playerRepo.playerChunks.value[targetPlayer] ?: return@launch
                     val targetChunk = targetPlayerChunks.first()
-                    val targetVal = (config.ledCount * 10f) + targetChunk[targetChunk.size / 2]
+                    val targetVal = (config.ledCount * 5f) + targetChunk[targetChunk.size / 2]
 
                     val runAnim = Animatable(0.0f)
                     val fillAnim = Animatable(0.0f)
