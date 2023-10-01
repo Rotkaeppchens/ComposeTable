@@ -22,6 +22,7 @@ import org.koin.compose.koinInject
 import ui.theme.equilateralTriangleShape
 import view_models.EffectsViewModel
 import view_models.StatusViewModel
+import view_models.TurnViewModel
 
 @Composable
 fun StatusScreen(
@@ -140,16 +141,42 @@ fun ScreenCardDisplay(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
     ) {
         item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                EffectsCard()
-            }
+            ScreenCard(
+                title = "Effects Module",
+                content = { EffectsCard() }
+            )
         }
+        item {
+            ScreenCard(
+                title = "Turn Module",
+                content = { TurnCard() }
+            )
+        }
+    }
+}
+
+@Composable
+fun ScreenCard(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable (() -> Unit)
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+        content()
     }
 }
 
@@ -173,6 +200,46 @@ fun EffectsCard(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("End Battle")
+        }
+    }
+}
+
+@Composable
+fun TurnCard(
+    viewModel: TurnViewModel = koinInject(),
+    modifier: Modifier = Modifier
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    Column(
+        modifier = modifier
+            .padding(8.dp)
+    ) {
+        Button(
+            onClick = { viewModel.setNextPlayerActive(true) },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Next Player")
+        }
+        Button(
+            onClick = { viewModel.setNextPlayerActive(false) },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Last Player")
+        }
+        TextButton(
+            onClick = { viewModel.setAlphaAnimActive(!uiState.alphaAnimIsActive) },
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .fillMaxWidth()
+        ) {
+            Switch(
+                checked = uiState.alphaAnimIsActive,
+                onCheckedChange = null,
+            )
+            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+            Text("Alpha Animation")
         }
     }
 }
