@@ -41,9 +41,7 @@ class TurnViewModel(
 
         turnModule.setPlayerOrder(newList.map { it.id })
     }
-    fun reversePlayerOrder() {
-        turnModule.setPlayerOrder(uiState.value.playerList.reversed().map { it.id })
-    }
+    fun reversePlayerOrder() = turnModule.setPlayerOrder(uiState.value.playerList.reversed().map { it.id })
     fun setRandomPlayerActive() = turnModule.setRandomPlayerActive(_randomAnimType.value)
     fun setPseudoRandomActive(playerId: Int) = turnModule.startPseudoRandomAnimation(playerId, _randomAnimType.value)
     fun setNextPlayerActive(forward: Boolean) = turnModule.setNextPlayerActive(forward)
