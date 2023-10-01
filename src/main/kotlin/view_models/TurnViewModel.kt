@@ -49,9 +49,7 @@ class TurnViewModel(
     fun setNextPlayerActive(forward: Boolean) = turnModule.setNextPlayerActive(forward)
     fun setOrderFromTable() = turnModule.setPlayerOrderFromTable()
 
-    fun setRandomAnimType(type: TurnModule.RandomAnimationType) {
-        _randomAnimType.update { type }
-    }
+    fun setRandomAnimType(type: TurnModule.RandomAnimationType) = _randomAnimType.update { type }
 
     data class UiState(
         val activePlayerId: Int,
