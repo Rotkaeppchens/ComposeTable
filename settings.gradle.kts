@@ -35,6 +35,8 @@ dependencyResolutionManagement {
 
             // Log4J for the LED library
             library("log4j.core", "org.apache.logging.log4j", "log4j-core").version(extra["log4j.version"] as String)
+
+            library("usb4java.javax", "org.usb4java", "usb4java-javax").version(extra["usb4java.version"] as String)
         }
     }
 }
