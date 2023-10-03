@@ -462,19 +462,26 @@ fun UsbDeviceInfo(
         ) {
             val producerString = try {
                 device.manufacturerString ?: ""
-            } catch (_: UsbException) {
-                ""
+            } catch (e: UsbException) {
+                e.message
+            } catch (e: UsbDisconnectedException) {
+                e.message
             }
             val productString = try {
                 device.productString ?: ""
-            } catch (_: UsbException) {
-                ""
+            } catch (e: UsbException) {
+                e.message
+            } catch (e: UsbDisconnectedException) {
+                e.message
             }
             val serialNumber = try {
                 device.serialNumberString
-            } catch (_: UsbException) {
-                ""
+            } catch (e: UsbException) {
+                e.message
+            } catch (e: UsbDisconnectedException) {
+                e.message
             }
+
             val speed = when (device.speed) {
                 UsbConst.DEVICE_SPEED_FULL -> "FULL"
                 UsbConst.DEVICE_SPEED_LOW -> "LOW"
@@ -488,7 +495,11 @@ fun UsbDeviceInfo(
             Text("Speed: $speed")
             Text(device.usbDeviceDescriptor.toString())
 
-            device.parentUsbPort?.let { port ->
+            try {
+                device.parentUsbPort
+            } catch (e: UsbDisconnectedException) {
+                null
+            } ?.let { port ->
                 Text("Connected to port: ${port.portNumber}")
                 Text("Parent: ${port.usbHub}")
             }
