@@ -488,11 +488,17 @@ fun UsbDeviceInfo(
                 else -> "UNKNOWN"
             }
 
-            Text("Device: $device")
-            Text("Producer: $producerString")
-            Text("Product: $productString")
-            Text("Serial Number: $serialNumber")
+            Text("Device:")
+            Text(text = device.toString(), style = MaterialTheme.typography.bodyMedium)
+            Text("Producer:")
+            Text(text = producerString.toString(), style = MaterialTheme.typography.bodyMedium)
+            Text("Product:")
+            Text(text = productString.toString(), style = MaterialTheme.typography.bodyMedium)
+            Text("Serial Number:")
+            Text(text = serialNumber.toString(), style = MaterialTheme.typography.bodyMedium)
             Text("Speed: $speed")
+
+            Spacer(Modifier.height(8.dp))
             Text(device.usbDeviceDescriptor.toString())
 
             try {
