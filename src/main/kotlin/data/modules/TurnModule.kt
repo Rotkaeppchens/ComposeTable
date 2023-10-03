@@ -116,11 +116,12 @@ class TurnModule(
             }
             null -> {
                 val ledFilter = Array(config.ledCount) { LedColor.Transparent }
-                val alpha = if (_alphaAnimIsActive.value) {
-                    alphaAnimation.value.toDouble()
-                } else 1.0
 
                 activePlayer.value?.let { player ->
+                    val alpha = if (_alphaAnimIsActive.value) {
+                        alphaAnimation.value.toDouble()
+                    } else 1.0
+
                     playerRepo.playerChunks.value[player]?.forEach { chunk ->
                         chunk.forEachIndexed { i, ledId ->
                             if (i % 2 == 0) {
