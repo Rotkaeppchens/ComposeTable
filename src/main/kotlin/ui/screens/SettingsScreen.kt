@@ -87,8 +87,7 @@ fun SettingsScreen(
                 SettingsNavState.MAIN_LOOP_INFO -> MainLoopInfo(
                     loopState = loopState,
                     onStartLoop = onStartLoop,
-                    onUpdateLoopState = onUpdateLoopState,
-                    modifier = modifier
+                    onUpdateLoopState = onUpdateLoopState
                 )
                 SettingsNavState.MODULE_CONFIG -> ModuleList(
                     moduleConfigList = moduleConfigList,
@@ -189,7 +188,7 @@ fun MainLoopInfo(
     loopState: Boolean,
     onStartLoop: () -> Unit,
     onUpdateLoopState: () -> Unit,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
