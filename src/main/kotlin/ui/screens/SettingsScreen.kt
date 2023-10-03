@@ -1,8 +1,11 @@
 package ui.screens
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,13 +22,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import data.BaseConfig
 import data.entities.ModuleConfig
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import view_models.SettingsViewModel
+import javax.usb.*
+
 
 enum class SettingsNavState {
     INFO,
     MAIN_LOOP_INFO,
-    MODULE_CONFIG
+    MODULE_CONFIG,
+    USB_CONFIG
 }
 
 @Composable
@@ -47,6 +54,7 @@ fun SettingsScreen(
         onModuleEnable = { moduleId, enabled ->
             viewModel.setModuleEnabled(moduleId, enabled)
         },
+        usbDeviceList = uiState.usbDeviceList,
         modifier = modifier
     )
 }
@@ -60,6 +68,7 @@ fun SettingsScreen(
     moduleConfigList: List<ModuleConfig>,
     onModuleMove: (id: String, newIndex: Int) -> Unit,
     onModuleEnable: (moduleId: String, enabled: Boolean) -> Unit,
+    usbDeviceList: List<UsbDevice>,
     modifier: Modifier = Modifier
 ) {
     val (navState, setNavState) = remember { mutableStateOf(SettingsNavState.INFO) }
@@ -85,6 +94,9 @@ fun SettingsScreen(
                     moduleConfigList = moduleConfigList,
                     onModuleMove = onModuleMove,
                     onModuleEnable = onModuleEnable
+                )
+                SettingsNavState.USB_CONFIG -> UsbPage(
+                    deviceList = usbDeviceList
                 )
             }
         }
@@ -320,6 +332,197 @@ fun ModuleItem(
 }
 
 @Composable
+fun UsbPage(
+    deviceList: List<UsbDevice>,
+    services: UsbServices = UsbHostManager.getUsbServices(),
+    modifier: Modifier = Modifier
+) {
+    var deviceId by remember { mutableStateOf (0.toShort() to 0.toShort()) }
+    var selectedDevice: UsbDevice? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(deviceId) {
+        selectedDevice = deviceList.find {
+            val descriptor = it.usbDeviceDescriptor
+            val (vendorId, productId) = deviceId
+
+            descriptor.idVendor() == vendorId && descriptor.idProduct() == productId
+        }
+    }
+
+    Row(
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(0.5f)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+            ) {
+                Text("${services.impDescription} Ver.: ${services.impVersion}")
+                Text("API Ver.: ${services.apiVersion}")
+            }
+
+            UsbDeviceList(
+                deviceList = deviceList,
+                onDeviceSelected = { vendorId, productId ->
+                    deviceId = vendorId to productId
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        selectedDevice?.let {
+            UsbDeviceInfo(
+                device = it,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+fun UsbDeviceList(
+    deviceList: List<UsbDevice>,
+    onDeviceSelected: (vendorId: Short, productId: Short) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+
+    LazyColumn(
+        state = listState,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+            .draggable(
+                state = rememberDraggableState { delta ->
+                    scope.launch {
+                        listState.scrollBy(-delta)
+                    }
+                },
+                orientation = Orientation.Vertical
+            )
+    ) {
+        items(deviceList) { device ->
+            val descriptor = device.usbDeviceDescriptor
+
+            Box(
+                contentAlignment = Alignment.CenterStart,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable {
+                        onDeviceSelected(
+                            descriptor.idVendor(),
+                            descriptor.idProduct()
+                        )
+                    }
+                    .background(
+                        color = MaterialTheme.colorScheme.secondaryContainer
+                    )
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = device.toString(),
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun UsbDeviceInfo(
+    device: UsbDevice,
+    modifier: Modifier = Modifier
+) {
+    val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
+
+    Card(
+        modifier = modifier
+            .padding(8.dp)
+
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .verticalScroll(
+                    state = scrollState
+                )
+                .draggable(
+                    state = rememberDraggableState { delta ->
+                        scope.launch {
+                            scrollState.scrollBy(-delta)
+                        }
+                    },
+                    orientation = Orientation.Vertical
+                )
+        ) {
+            val producerString = try {
+                device.manufacturerString ?: ""
+            } catch (_: UsbException) {
+                ""
+            }
+            val productString = try {
+                device.productString ?: ""
+            } catch (_: UsbException) {
+                ""
+            }
+            val serialNumber = try {
+                device.serialNumberString
+            } catch (_: UsbException) {
+                ""
+            }
+            val speed = when (device.speed) {
+                UsbConst.DEVICE_SPEED_FULL -> "FULL"
+                UsbConst.DEVICE_SPEED_LOW -> "LOW"
+                else -> "UNKNOWN"
+            }
+
+            Text("Device: $device")
+            Text("Producer: $producerString")
+            Text("Product: $productString")
+            Text("Serial Number: $serialNumber")
+            Text("Speed: $speed")
+            Text(device.usbDeviceDescriptor.toString())
+
+            device.parentUsbPort?.let { port ->
+                Text("Connected to port: ${port.portNumber}")
+                Text("Parent: ${port.usbHub}")
+            }
+
+            // Process all configurations
+            device.usbConfigurations.forEach { configuration ->
+                if (configuration is UsbConfiguration) {
+                    // Dump configuration descriptor
+                    Text(configuration.usbConfigurationDescriptor.toString())
+
+                    // Process all interfaces
+                    configuration.usbInterfaces?.let { usbInterface ->
+                        if (usbInterface is UsbInterface) {
+                            // Dump the interface descriptor
+                            Text("Interface Descriptor: $usbInterface.usbInterfaceDescriptor")
+
+                            // Process all endpoints
+                            usbInterface.usbEndpoints?.let { endpoint ->
+
+                                if (endpoint is UsbEndpoint) {
+                                    // Dump the endpoint descriptor
+                                    Text(endpoint.usbEndpointDescriptor.toString())
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun NavBar(
     navState: SettingsNavState,
     setNavState: (SettingsNavState) -> Unit,
@@ -363,6 +566,19 @@ fun NavBar(
             },
             label = {
                 Text("Modules")
+            }
+        )
+        NavigationBarItem(
+            selected = navState == SettingsNavState.USB_CONFIG,
+            onClick = { setNavState(SettingsNavState.USB_CONFIG) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.Usb,
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text("USB")
             }
         )
     }
