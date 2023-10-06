@@ -1,10 +1,7 @@
 package data.modules
 
 import androidx.compose.animation.core.*
-import data.BaseConfig
-import data.LedAnimationClock
-import data.LedColor
-import data.LedModule
+import data.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +10,8 @@ import kotlinx.coroutines.launch
 
 class EffectsModule(
     private val config: BaseConfig,
-    private val animationClock: LedAnimationClock
+    private val animationClock: LedAnimationClock,
+    private val dmxController: DmxController
 ): LedModule() {
     override val moduleId: String = "Effects"
 
@@ -72,10 +70,12 @@ class EffectsModule(
 
     fun startBattle() {
         battleAnim(LedColor.White, LedColor(1.0, 0.0, 0.0, 1.0))
+        dmxController.runStartBattle()
     }
 
     fun endBattle() {
         battleAnim(LedColor(1.0, 0.0, 0.0, 1.0), LedColor.White)
+        dmxController.runEndBattle()
     }
 
     private fun battleAnim(initialColor: LedColor, targetColor: LedColor) {

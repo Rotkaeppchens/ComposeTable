@@ -63,10 +63,16 @@ class BaseConfig {
             val touchSlop: Float
         )
 
+        data class DmxConfig(
+            val startBattleCmd: String,
+            val endBattleCmd: String,
+        )
+
         data class Config(
             val ledService: LedService,
             val tableConfig: TableConfig,
-            val interfaceConfig: InterfaceConfig
+            val interfaceConfig: InterfaceConfig,
+            val dmxConfig: DmxConfig
         )
     }
 }
