@@ -64,8 +64,6 @@ class BaseConfig {
         )
 
         data class DmxConfig(
-            val startBattleCmd: String,
-            val endBattleCmd: String,
         )
 
         data class Config(
