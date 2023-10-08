@@ -45,6 +45,8 @@ dependencies {
 
     // Log4j for the LED library
     implementation(libs.log4j.core)
+
+    implementation(libs.jserialcomm)
 }
 
 compose.desktop {

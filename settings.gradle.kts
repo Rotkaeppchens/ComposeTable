@@ -35,6 +35,9 @@ dependencyResolutionManagement {
 
             // Log4J for the LED library
             library("log4j.core", "org.apache.logging.log4j", "log4j-core").version(extra["log4j.version"] as String)
+
+            // Serial library for communication with the dmx controller
+            library("jserialcomm", "com.fazecast", "jSerialComm").version(extra["jserialcomm.version"] as String)
         }
     }
 }
