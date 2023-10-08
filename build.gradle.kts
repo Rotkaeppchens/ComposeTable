@@ -45,9 +45,6 @@ dependencies {
 
     // Log4j for the LED library
     implementation(libs.log4j.core)
-
-    // serial library for communication with usb devices
-    implementation(libs.usb4java.javax)
 }
 
 compose.desktop {

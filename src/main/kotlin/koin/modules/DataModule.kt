@@ -20,7 +20,6 @@ val dataModule = module {
     singleOf(::BaseConfig)
     singleOf(::LedAnimationClock)
     singleOf(::LedController) withOptions { createdAtStart() }
-    singleOf(::UsbController)
     singleOf(::DmxController)
 
     // Repositories

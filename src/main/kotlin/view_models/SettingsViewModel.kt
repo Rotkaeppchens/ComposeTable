@@ -3,36 +3,30 @@ package view_models
 import data.BaseConfig
 import data.LedController
 import data.ModuleController
-import data.UsbController
 import data.entities.ModuleConfig
 import kotlinx.coroutines.flow.*
 import view_models.base.ViewModel
-import javax.usb.UsbDevice
 
 class SettingsViewModel(
     baseConfig: BaseConfig,
     private val ledController: LedController,
-    private val moduleController: ModuleController,
-    private val usbController: UsbController
+    private val moduleController: ModuleController
 ) : ViewModel() {
     private val _mainLoopIsActive: MutableStateFlow<Boolean> = MutableStateFlow(ledController.loopIsActive)
 
     val uiState: StateFlow<UiState> = combine(
         _mainLoopIsActive,
-        moduleController.moduleConfigList,
-        usbController.deviceList
-    ) { mainLoopIsActive, moduleConfigList, usbDeviceList ->
+        moduleController.moduleConfigList
+    ) { mainLoopIsActive, moduleConfigList ->
         UiState(
             config = baseConfig.config,
             mainLoopIsActive = mainLoopIsActive,
-            moduleConfigList = moduleConfigList,
-            usbDeviceList = usbDeviceList
+            moduleConfigList = moduleConfigList
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState(
         config = baseConfig.config,
         mainLoopIsActive = ledController.loopIsActive,
-        moduleConfigList = emptyList(),
-        usbDeviceList = emptyList()
+        moduleConfigList = emptyList()
     ))
 
     fun setModuleEnabled(moduleId: String, enabled: Boolean) = moduleController.setModuleEnabled(moduleId, enabled)
@@ -63,7 +57,6 @@ class SettingsViewModel(
     data class UiState (
         val config: BaseConfig.Companion.Config,
         val mainLoopIsActive: Boolean,
-        val moduleConfigList: List<ModuleConfig>,
-        val usbDeviceList: List<UsbDevice>
+        val moduleConfigList: List<ModuleConfig>
     )
 }
