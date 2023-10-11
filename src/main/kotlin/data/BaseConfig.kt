@@ -63,14 +63,10 @@ class BaseConfig {
             val touchSlop: Float
         )
 
-        data class DmxConfig(
-        )
-
         data class Config(
             val ledService: LedService,
             val tableConfig: TableConfig,
-            val interfaceConfig: InterfaceConfig,
-            val dmxConfig: DmxConfig
+            val interfaceConfig: InterfaceConfig
         )
     }
 }
