@@ -69,39 +69,14 @@ fun TableSetupScreen(
                 activePlayerId = activePlayerId,
                 modifier = Modifier.weight(1f)
             )
-
             Divider(
                 thickness = Dp.Hairline,
                 color = MaterialTheme.colorScheme.onSecondaryContainer
             )
-
-            val buttonContent: @Composable RowScope.() -> Unit = {
-                Icon(
-                    imageVector = Icons.Outlined.Clear,
-                    contentDescription = "Clear",
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
-                )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text(text = "Clear")
-            }
-
-            if (activePlayerId == null) {
-                Button(
-                    onClick = { setActivePlayerId(null) },
-                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                    content = buttonContent,
-                    modifier = Modifier
-                        .padding(8.dp)
-                )
-            } else {
-                OutlinedButton(
-                    onClick = { setActivePlayerId(null) },
-                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                    content = buttonContent,
-                    modifier = Modifier
-                        .padding(8.dp)
-                )
-            }
+            ClearButton(
+                isActive = activePlayerId == null,
+                onClick = { setActivePlayerId(null) }
+            )
         }
         Box(
             contentAlignment = Alignment.Center,
@@ -114,6 +89,41 @@ fun TableSetupScreen(
                 onSetPlayerSide(sideId, activePlayerId)
             }
         }
+    }
+}
+
+@Composable
+fun ClearButton(
+    isActive: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val buttonContent: @Composable RowScope.() -> Unit = {
+        Icon(
+            imageVector = Icons.Outlined.Clear,
+            contentDescription = "Clear",
+            modifier = Modifier.size(ButtonDefaults.IconSize)
+        )
+        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+        Text(text = "Clear")
+    }
+
+    if (isActive) {
+        Button(
+            onClick = onClick,
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            content = buttonContent,
+            modifier = modifier
+                .padding(8.dp)
+        )
+    } else {
+        OutlinedButton(
+            onClick = onClick,
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            content = buttonContent,
+            modifier = modifier
+                .padding(8.dp)
+        )
     }
 }
 
