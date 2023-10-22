@@ -60,7 +60,9 @@ class BaseConfig {
             val useDarkTheme: Boolean,
             val maximiseWindow: Boolean,
             val renderer: ComposeRenderer,
-            val touchSlop: Float
+            val touchSlop: Float,
+            val density: Float,
+            val fontScale: Float
         )
 
         data class Config(
