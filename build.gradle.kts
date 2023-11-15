@@ -22,6 +22,9 @@ dependencies {
     implementation(compose.desktop.currentOs) {
         exclude("org.jetbrains.compose.material")
     }
+    implementation(compose.desktop.macos_arm64) {
+        exclude("org.jetbrains.compose.material")
+    }
     implementation(compose.material3)
     implementation(compose.materialIconsExtended)
     implementation(compose.animation)
@@ -54,7 +57,7 @@ compose.desktop {
         mainClass = "MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.AppImage, TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "ComposeTable"
             packageVersion = "1.0.0"
         }

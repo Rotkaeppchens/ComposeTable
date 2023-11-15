@@ -128,7 +128,7 @@ fun InfoScreen(
 
             InfoTitle("Interface Config:")
             InfoLine("Dark Theme:", config.interfaceConfig.useDarkTheme)
-            InfoLine("Maximise Window:", config.interfaceConfig.maximiseWindow)
+            InfoLine("Maximise Window:", config.interfaceConfig.mainWindowMaximised)
             InfoLine("Renderer:", config.interfaceConfig.renderer)
             InfoLine("Touch Slop:", config.interfaceConfig.touchSlop)
         }
