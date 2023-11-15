@@ -21,6 +21,7 @@ import data.BaseConfig
 import data.entities.ModuleConfig
 import org.koin.compose.koinInject
 import view_models.SettingsViewModel
+import kotlin.reflect.full.memberProperties
 
 
 enum class SettingsNavState {
@@ -106,31 +107,34 @@ fun InfoScreen(
             .padding(8.dp)
             .fillMaxSize()
     ) {
-        Column {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
             InfoTitle("LED Service:")
-            InfoLine("Init Strip:", config.ledService.initStrip)
-            InfoLine("LED Count:", config.ledService.ledCount)
-            InfoLine("GPIO Pin:", config.ledService.gpioPin)
-            InfoLine("Frequency (Hz):", config.ledService.frequencyHz)
-            InfoLine("DMA:", config.ledService.dma)
-            InfoLine("Brightness:", config.ledService.brightness)
-            InfoLine("PWM Channel:", config.ledService.pwmChannel)
-            InfoLine("Invert:", config.ledService.invert)
-            InfoLine("Type:", config.ledService.stripType)
-            InfoLine("Clear On Exit:", config.ledService.clearOnExit)
+            BaseConfig.Companion.LedService::class.memberProperties.forEach { prop ->
+                val name = prop.name
+                val value = prop.get(config.ledService)
+                InfoLine(name, value ?: "")
+            }
         }
-        Column {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
             InfoTitle("Table Config:")
-            InfoLine("Break Points:", config.tableConfig.breakPoints)
-            InfoLine("Loop sleep time:", config.tableConfig.loopSleepTime)
+            BaseConfig.Companion.TableConfig::class.memberProperties.forEach { prop ->
+                val name = prop.name
+                val value = prop.get(config.tableConfig)
+                InfoLine(name, value ?: "")
+            }
 
             Spacer(Modifier.height(16.dp))
 
             InfoTitle("Interface Config:")
-            InfoLine("Dark Theme:", config.interfaceConfig.useDarkTheme)
-            InfoLine("Maximise Window:", config.interfaceConfig.mainWindowMaximised)
-            InfoLine("Renderer:", config.interfaceConfig.renderer)
-            InfoLine("Touch Slop:", config.interfaceConfig.touchSlop)
+            BaseConfig.Companion.InterfaceConfig::class.memberProperties.forEach { prop ->
+                val name = prop.name
+                val value = prop.get(config.interfaceConfig)
+                InfoLine(name, value ?: "")
+            }
         }
     }
 }
