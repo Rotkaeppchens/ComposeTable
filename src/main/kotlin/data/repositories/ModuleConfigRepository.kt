@@ -5,10 +5,8 @@ import data.entities.ModuleConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.replace
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class ModuleConfigRepository {
@@ -61,11 +59,12 @@ class ModuleConfigRepository {
     fun getMaxPriority(): Int {
         return transaction {
             ModuleConfigTable
+                .slice(ModuleConfigTable.priority)
                 .selectAll()
-                .maxByOrNull { ModuleConfigTable.priority }
-                ?.let {
-                    it[ModuleConfigTable.priority]
-                } ?: 0
+                .orderBy(ModuleConfigTable.priority to SortOrder.DESC)
+                .limit(1)
+                .firstOrNull()
+                ?.get(ModuleConfigTable.priority) ?: 0
         }
     }
 }
