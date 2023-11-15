@@ -6,6 +6,7 @@ import data.LedController
 import data.ModuleController
 import data.repositories.ModuleConfigRepository
 import data.repositories.PlayerRepository
+import data.repositories.TurnRepository
 import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.withOptions
@@ -27,4 +28,5 @@ val dataModule = module {
     // Repositories
     singleOf(::PlayerRepository)
     singleOf(::ModuleConfigRepository)
+    singleOf(::TurnRepository)
 }
