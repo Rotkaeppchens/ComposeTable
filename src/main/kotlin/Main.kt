@@ -1,4 +1,8 @@
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -11,6 +15,7 @@ import koin.modules.viewModelsModule
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
 import ui.App
+import ui.AppOffScreen
 
 fun main() = application {
     initDatabase()
@@ -36,7 +41,8 @@ fun main() = application {
             System.setProperty("skiko.renderApi", renderer)
         }
 
-        val windowState = if (interfaceConfig.maximiseWindow) {
+        // Main Window on the touch display
+        val windowState = if (interfaceConfig.mainWindowMaximised) {
             rememberWindowState(
                 placement = WindowPlacement.Fullscreen
             )
@@ -50,8 +56,8 @@ fun main() = application {
                 placement = WindowPlacement.Floating,
                 position = WindowPosition(Alignment.Center),
                 size = DpSize(
-                    width = 800.dp,
-                    height = 480.dp
+                    width = 960.dp,
+                    height = 540.dp
                 )
             )
         }
@@ -64,6 +70,34 @@ fun main() = application {
                 useDarkTheme = interfaceConfig.useDarkTheme,
                 onExit = ::exitApplication
             )
+        }
+
+        // Off window to display information to the players
+        val offWindowState = if (interfaceConfig.offWindowMaximised) {
+            rememberWindowState(
+                placement = WindowPlacement.Fullscreen
+            )
+        } else {
+            rememberWindowState(
+                position = WindowPosition(
+                    interfaceConfig.offWindowPosition.first.dp,
+                    interfaceConfig.offWindowPosition.second.dp
+                ),
+                size = DpSize(
+                    width = 960.dp,
+                    height = 540.dp
+                )
+            )
+        }
+
+        var displayOffWindow by remember { mutableStateOf(interfaceConfig.offWindowOpen) }
+        if (displayOffWindow) {
+            Window(
+                onCloseRequest = { displayOffWindow = false },
+                state = offWindowState
+            ) {
+                AppOffScreen()
+            }
         }
     }
 }
