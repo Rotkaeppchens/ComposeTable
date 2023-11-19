@@ -12,6 +12,7 @@ import data.database.source.initDatabase
 import koin.modules.dataModule
 import koin.modules.ledModulesModule
 import koin.modules.viewModelsModule
+import org.jetbrains.skiko.GraphicsApi
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
 import ui.App
@@ -30,15 +31,8 @@ fun main() = application {
         val config: BaseConfig = koinInject()
         val interfaceConfig = config.config.interfaceConfig
 
-        if (interfaceConfig.renderer != BaseConfig.Companion.ComposeRenderer.DEFAULT) {
-            val renderer = when (interfaceConfig.renderer) {
-                BaseConfig.Companion.ComposeRenderer.SOFTWARE -> "SOFTWARE"
-                BaseConfig.Companion.ComposeRenderer.OPENGL -> "OPENGL"
-                BaseConfig.Companion.ComposeRenderer.METAL -> "METAL"
-                else -> "SOFTWARE"
-            }
-
-            System.setProperty("skiko.renderApi", renderer)
+        if (interfaceConfig.renderer != GraphicsApi.UNKNOWN) {
+            System.setProperty("skiko.renderApi", interfaceConfig.renderer.name)
         }
 
         // Main Window on the touch display

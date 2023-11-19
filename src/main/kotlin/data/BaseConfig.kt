@@ -3,6 +3,7 @@ package data
 import com.github.mbelling.ws281x.LedStripType
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceOrFileSource
+import org.jetbrains.skiko.GraphicsApi
 import kotlin.time.Duration
 
 class BaseConfig {
@@ -31,13 +32,6 @@ class BaseConfig {
     }
 
     companion object {
-        enum class ComposeRenderer {
-            DEFAULT,
-            SOFTWARE,
-            OPENGL,
-            METAL
-        }
-
         data class LedService (
             val initStrip: Boolean,
             val ledCount: Int,
@@ -62,7 +56,7 @@ class BaseConfig {
             val offWindowOpen: Boolean,
             val offWindowPosition: Pair<Int, Int>,
             val offWindowMaximised: Boolean,
-            val renderer: ComposeRenderer,
+            val renderer: GraphicsApi = GraphicsApi.UNKNOWN,
             val touchSlop: Float,
             val density: Float,
             val fontScale: Float
